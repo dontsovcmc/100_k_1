@@ -35,23 +35,11 @@
 
 Window::Window()
 {
+
   help_show = FALSE;
-  font1 = new QFont;
-  font1->setFamily(FONT_STYLE1);
-  font1->setPointSize(FONT_SIZE1);
-  
-  font2 = new QFont;
-  font2->setFamily(FONT_STYLE1);
-  font2->setPointSize(FONT_SIZE1);
-  font2->setUnderline(TRUE);
-  font2->setBold(TRUE);
-  
-  fontNum = new QFont;
-  fontNum->setFamily(FONT_STYLE3);
-  fontNum->setPointSize(FONT_SIZE3);
-  fontNum->setUnderline(FALSE);
-  fontNum->setBold(FALSE);
-  
+
+  LoadSettings(SETT_FILE_PATH);
+      
   pal3 = new QPalette;
   pal3->setColor(QPalette::Text, Qt::gray);
   pal = new QPalette;
@@ -59,12 +47,7 @@ Window::Window()
   
 //==========================
 
-  QSound::play("sound\\start.wav"); 
-    command0name = "com1";
-  command1name = "com2";
-  time1 = TIMER1;
-  time2 = TIMER2;
-  winpoint = WIN_POINT;
+  QSound::play("sound\\start.wav");
   
   help = new QLabel;
   mainL = new QVBoxLayout;
@@ -77,10 +60,6 @@ Window::Window()
   connect(timer, SIGNAL(timeout()), SLOT(updateCaption()));
   connect(this, SIGNAL(keyPressEvent(QKeyEvent * event)), this, SLOT(keyPressEvent(QKeyEvent * event)));
   
-  for (int i=0;i<ROUND_LAST;i++)
-    Rounds[i] = TRUE;
-
-  LoadSettings(SETT_FILE_PATH);
 
   com0label->setText(command0name);
   com1label->setText(command1name);  
@@ -116,6 +95,23 @@ static char szquestion[] = "ques";
 static char szanswer[] = "answ";
 static char szpoints[] = "points";
 
+
+#define FONT_STYLE1 "Journal"
+#define FONT_STYLE2 "Journal"
+#define FONT_STYLE3 "Journal"
+
+#define FONT_SIZE1 30
+#define FONT_SIZE2 30
+#define FONT_SIZE3 25
+
+static char szFontStyle1[] = "FontStyle1";
+static char szFontStyle2[] = "FontStyle2";
+static char szFontStyle3[] = "FontStyle3";
+static char szFontSize1[] = "FontSize1";
+static char szFontSize2[] = "FontSize2";
+static char szFontSize3[] = "FontSize3";
+
+
 void Window::LoadSettings(QString path)
 {
   QSettings sett(path, QSettings::IniFormat);
@@ -131,10 +127,28 @@ void Window::LoadSettings(QString path)
   command0name = sett.value(szcommand0name,szDefCommand0Name).toString();
   command1name = sett.value(szcommand1name,szDefCommand1Name).toString();
     
-  time1 = sett.value(sztime1).toInt();
-  time2 = sett.value(sztime2).toInt();
-  time3 = sett.value(sztime3).toInt();
-  winpoint = sett.value(szwinpoint).toInt();
+  time1 = sett.value(sztime1, TIMER1).toInt();
+  time2 = sett.value(sztime2, TIMER2).toInt();
+  time3 = sett.value(sztime3, TIMER3).toInt();
+  winpoint = sett.value(szwinpoint,WIN_POINT).toInt();
+
+
+  font1 = new QFont;
+  font1->setFamily(sett.value(szFontStyle1,FONT_STYLE1).toString());
+  font1->setPointSize(sett.value(szFontSize1,FONT_SIZE1).toInt());
+
+  font2 = new QFont;
+  font2->setFamily(sett.value(szFontStyle2,FONT_STYLE2).toString());
+  font2->setPointSize(sett.value(szFontSize2,FONT_SIZE2).toInt());
+  font2->setUnderline(TRUE);
+  font2->setBold(TRUE);
+
+  fontNum = new QFont;
+  fontNum->setFamily(sett.value(szFontStyle3,FONT_STYLE3).toString());
+  fontNum->setPointSize(sett.value(szFontSize3,FONT_SIZE3).toInt());
+  fontNum->setUnderline(FALSE);
+  fontNum->setBold(FALSE);
+
 
   vopros = new Question[MAX_ROUND];
   QString qkey, skeyAnsw;
@@ -175,6 +189,15 @@ void Window::SaveSettings(QString path)
   sett.setValue(szROUND_3,Rounds[ROUND_3]);
   sett.setValue(szROUND_OBR,Rounds[ROUND_OBR]);
   sett.setValue(szROUND_SUPER,Rounds[ROUND_SUPER]);
+
+  sett.setValue(szFontStyle1,font1->family());
+  sett.setValue(szFontSize1,font1->pointSize());
+
+  sett.setValue(szFontStyle2,font2->family());
+  sett.setValue(szFontSize2,font2->pointSize());
+
+  sett.setValue(szFontStyle3,fontNum->family());
+  sett.setValue(szFontSize3,fontNum->pointSize());
 
   sett.setValue(">>",QString("Названия команд"));
   sett.setValue(szcommand0name,command0name);
@@ -256,7 +279,7 @@ void Window::setupLevel()
 
   ansL = new QVBoxLayout;
 
-  for (int i=0;i<7;i++) 
+  for (int i=0;i<MAX_QUESTION+1;i++) 
   {
      QString url;
      url = QString("bmp\\answ_")+QString::number(i+1)+QString(".bmp");
@@ -285,7 +308,7 @@ void Window::setupLevel()
   //==================BAD========
   com0badL = new QVBoxLayout;
   com1badL = new QVBoxLayout;
-  for (int i=0;i<3;i++) 
+  for (int i=0;i<MAX_BAD;i++) 
   { 
       bad0label[i] = new QLabel;
       bad1label[i] = new QLabel;
@@ -320,9 +343,9 @@ void Window::calcsum()
   int sum, sum2;
   sum=0;
   sum2 = 0;
-  for (int i=0;i<5;i++)
+  for (int i=0;i<MAX_SUPERGAME_QUESTION;i++)
   {
-      sum += user0voice[i]->text().toInt();
+    sum += user0voice[i]->text().toInt();
     sum2 += user1voice[i]->text().toInt();
   }
   sum2 += sum;
@@ -380,7 +403,7 @@ void Window::setupBigGame()
   timerButton = new QPushButton("Таймер");
   timerButton->setFixedSize(150,40);
   
-  for (int i=0;i<6;i++)
+  for (int i=0;i<MAX_QUESTION;i++)
   {
     user0num[i] = new QLineEdit;
     user0lbl[i] = new QLineEdit;

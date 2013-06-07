@@ -50,6 +50,9 @@ enum ROUND {
 
 #define MAX_ROUND ROUND_SUPER
 #define MAX_QUESTION 6
+#define MAX_BAD 3
+
+#define MAX_SUPERGAME_QUESTION 5
 
 class Window : public QWidget
 {
