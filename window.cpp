@@ -50,6 +50,7 @@ Window::Window()
   QSound::play("sound\\start.wav");
   
   help = new QLabel;
+  help->setVisible(help_show);
   mainL = new QVBoxLayout;
   setupLevel();
   setupTimerWindow();
@@ -64,8 +65,17 @@ Window::Window()
   com0label->setText(command0name);
   com1label->setText(command1name);  
   
-  level = 1;
+  level = GetFirstLevel();
   newLevel(level);
+}
+
+int Window::GetFirstLevel()
+{
+  return 1;
+  for (int i=0;i<ROUND_LAST;i++)
+    if (Rounds[i])
+      return i+1;
+  return -1;
 }
 
 Window::~Window()
@@ -414,7 +424,8 @@ void Window::setupBigGame()
 
     user0num[i]->setFont(*fontNum);
     user0num[i]->setFixedSize(50,60);
-    if (i != 5) user0num[i]->setText(QString::number(i+1)+".");
+    if (i != 5) 
+      user0num[i]->setText(QString::number(i+1)+".");
     user0num[i]->setPalette(*pal3);
     user0num[i]->setReadOnly(TRUE);      
     
@@ -425,7 +436,8 @@ void Window::setupBigGame()
 
     user1num[i]->setFont(*fontNum);
     user1num[i]->setFixedSize(50,60);
-    if (i != 5) user1num[i]->setText(QString::number(i+1)+".");
+    if (i != 5) 
+      user1num[i]->setText(QString::number(i+1)+".");
     user1num[i]->setPalette(*pal3);
     user1num[i]->setReadOnly(TRUE);  
     
@@ -464,7 +476,10 @@ void Window::setupBigGame()
   hboxlayout->addWidget( user1wgtvoice);
   hboxlayout->addWidget( user1wgt);
 
-  if (point0 >= point1) str = command0name; else str = command1name;
+  if (point0 >= point1) 
+    str = command0name; 
+  else 
+    str = command1name;
 
   connect(timerButton, SIGNAL(clicked()), this, SLOT(startTimer()));
   connect(but, SIGNAL(clicked()), this, SLOT(calcsum()));
@@ -493,7 +508,7 @@ void Window::setupBigGame()
 
 void Window::hideAnswer()
 {
-  for (int i=0;i<5;i++)
+  for (int i=0;i<MAX_SUPERGAME_QUESTION;i++)
   {
     user0lbl[i]->setVisible(!user0lbl[i]->isVisible());
     user0voice[i]->setVisible(!user0voice[i]->isVisible());
@@ -544,8 +559,10 @@ void Window::setActiveCommand(int i)
 
 void Window::addPoint(int i)
 {
-  if (i)   { point1 += points;   
-  }   else  { point0 +=points; }
+  if (i)   
+    point1 += points;   
+  else  
+    point0 +=points;
     
   points = 0;
   pointLCD->display(points);
@@ -556,7 +573,8 @@ void Window::addPoint(int i)
   game1 = FALSE;
   game2 = FALSE;
   
-  if (obrat)   winner = FALSE;
+  if (obrat)   
+    winner = FALSE;
 }
 
 void Window::setupGame()
@@ -622,20 +640,21 @@ void Window::setupGameOk()
 
 void Window::keyPressEvent(QKeyEvent * event)
 {
-   if (!help_show) help->setText("");
+   help->setVisible(help_show);
+
    switch(event->key())
    {
     case Qt::Key_F2: setupGame();
     break;
-    case Qt::Key_F1: if (help_show) help_show = FALSE;
-            else help_show = TRUE;
-            
-             if (help_show) help->setText("надписи включены");
-             else help->setText("надписи отключены");
+    case Qt::Key_F1: 
+             help_show = !help_show;
+             help->setText("надписи включены");
     break;
-      case Qt::Key_1: if (level !=5 ) 
+      case Qt::Key_1: 
+            if (level !=5 ) 
             { 
-              if (question->text() == curvopros->name) openAnswer(0);
+              if (question->text() == curvopros->name) 
+                openAnswer(0);
             }
             else 
             {
@@ -643,9 +662,11 @@ void Window::keyPressEvent(QKeyEvent * event)
               user0voice[0]->setVisible(!user0voice[0]->isVisible());          
             }
     break;
-      case Qt::Key_2: if (level !=5 ) 
+      case Qt::Key_2: 
+            if (level !=5 ) 
             { 
-              if (question->text() == curvopros->name) openAnswer(1);
+              if (question->text() == curvopros->name) 
+                openAnswer(1);
             }
             else 
             {
@@ -653,9 +674,11 @@ void Window::keyPressEvent(QKeyEvent * event)
               user0voice[1]->setVisible(!user0voice[1]->isVisible());          
             }
     break;
-      case Qt::Key_3: if (level !=5 ) 
+      case Qt::Key_3: 
+            if (level !=5 ) 
             { 
-              if (question->text() == curvopros->name) openAnswer(2);
+              if (question->text() == curvopros->name) 
+                openAnswer(2);
             }
             else 
             {
@@ -663,9 +686,11 @@ void Window::keyPressEvent(QKeyEvent * event)
               user0voice[2]->setVisible(!user0voice[2]->isVisible());          
             }
     break;
-      case Qt::Key_4: if (level !=5 ) 
+      case Qt::Key_4: 
+            if (level !=5 ) 
             { 
-              if (question->text() == curvopros->name) openAnswer(3);
+              if (question->text() == curvopros->name) 
+                openAnswer(3);
             }
             else 
             {
@@ -673,9 +698,11 @@ void Window::keyPressEvent(QKeyEvent * event)
               user0voice[3]->setVisible(!user0voice[3]->isVisible());          
             }
     break;
-      case Qt::Key_5: if (level !=5 ) 
+      case Qt::Key_5: 
+            if (level !=5 ) 
             { 
-              if (question->text() == curvopros->name) openAnswer(4);
+              if (question->text() == curvopros->name) 
+                openAnswer(4);
             }
             else 
             {
@@ -683,87 +710,107 @@ void Window::keyPressEvent(QKeyEvent * event)
               user0voice[4]->setVisible(!user0voice[4]->isVisible());          
             }
     break;
-      case Qt::Key_6: if (level !=5 && question->text() == curvopros->name) openAnswer(5);
+    case Qt::Key_6: 
+            if (level !=5 && question->text() == curvopros->name) 
+              openAnswer(5);
     break;  
-    case Qt::Key_Q: if (obrat) addPoint(0);
-            if (level == 5) startTimer();
+    case Qt::Key_Q: 
+            if (obrat) 
+              addPoint(0);
+            if (level == 5) 
+              startTimer();
     break;  
-    case Qt::Key_W: if (obrat) addPoint(1);
+    case Qt::Key_W: 
+            if (obrat) 
+              addPoint(1);
     break;
-    case Qt::Key_A: if (level !=5 ) return;
-          hideAnswer();
+    case Qt::Key_A: 
+            if (level !=5 ) 
+              return;
+            hideAnswer();
     break;
     case Qt::Key_Up:
        switch (level)
        {
           case 1: case 2: case 3:
-           if (zhreby) //жеребьевка
-           {    
+          if (zhreby) //жеребьевка
+          {    
             question->setText(curvopros->name);
-            if (help_show) help->setText ("1...6 - открыть ответы, up - начать игру 1");
+            help->setText ("1...6 - открыть ответы, up - начать игру 1");
             if (openanswer > 0) 
             {
-            if (help_show) help->setText ("Игра №" + QString::number(level) + ", Раунд 1: 1...6 - открыть ответы, < > - выбрать команду, del - не правильный ответ");
-            
+              help->setText ("Игра №" + QString::number(level) + ", Раунд 1: 1...6 - открыть ответы, < > - выбрать команду, del - не правильный ответ");
               zhreby = FALSE;
               game1 = TRUE;
             }
-           }
-           else if (game1 && openanswer < 6) return; //играет 1я команда
-           else if (game1 && openanswer == 6)
+          }
+          else 
+          if (game1 && openanswer < 6) 
+            return; //играет 1я команда
+          else 
+          if (game1 && openanswer == 6)
           {
             addPoint(activecommand);
-            if (help_show) help->setText ("Игра №" + QString::number(level) + ", Раунд 2: up - следующая игра");
+            help->setText ("Игра №" + QString::number(level) + ", Раунд 2: up - следующая игра");
           }
-          else if (game2 && !winner) //2я команда ответила, надо перечислить очки
-           {
+          else 
+          if (game2 && !winner) //2я команда ответила, надо перечислить очки
+          {
             if (badAnswer[activecommand] > 0) //выиграла первая команда
               addPoint(!activecommand);
-            else addPoint(activecommand);
-            
-            if (help_show) help->setText ("Игра №" + QString::number(level) + ", Раунд 2: 1...6 - открыть ответы, up - следующая игра");
-           }
-           else if (winner)
-           {
+            else 
+              addPoint(activecommand);
+
+            help->setText ("Игра №" + QString::number(level) + ", Раунд 2: 1...6 - открыть ответы, up - следующая игра");
+          }
+          else 
+          if (winner)
+          {
             level++;
             newLevel(level);
-           }         
+          }         
          break;    
          case 4: //игра наоборот
-        if (zhreby) //жеребьевка
-        {    
-          question->setText(curvopros->name);
-          Timer(TIMER3);
-          if (openanswer == 0) 
-          {
-            zhreby = FALSE;
-            obrat = TRUE;
+          if (zhreby) //жеребьевка
+          {    
+            question->setText(curvopros->name);
+            Timer(TIMER3);
+            if (openanswer == 0) 
+            {
+              zhreby = FALSE;
+              obrat = TRUE;
+            }
           }
-        }
-        else if (openanswer == 6 )
-        {
-           level++;
-             newLevel(level);
-        }      
-         break;
-         case 5: //up
-        if (user1voice[5]->text().toInt() >= winpoint)
-        {
-          QSound::play("sound\\win.wav");  
-        }
-        
+          else 
+          if (openanswer == 6 )
+          {
+            level++;
+            newLevel(level);
+          }      
+          break;
+          case 5: //up
+          if (user1voice[5]->text().toInt() >= winpoint)
+          {
+            QSound::play("sound\\win.wav");  
+          }
          break;
          default:
          break;
        }
     break;
-    case Qt::Key_Delete: if (level !=5) 
-                BadAnswer(); 
-               else Beep();
+    case Qt::Key_Delete: 
+      if (level !=5) 
+        BadAnswer(); 
+      else 
+        Beep();
     break;
-    case Qt::Key_Left: if (game1) setActiveCommand(0);
+    case Qt::Key_Left: 
+      if (game1) 
+        setActiveCommand(0);
     break;
-    case Qt::Key_Right: if (game1) setActiveCommand(1);
+    case Qt::Key_Right: 
+      if (game1) 
+        setActiveCommand(1);
     break;
    }
 }
@@ -880,7 +927,7 @@ void Window::newLevel(int i)
     pointLCD0->display(point0);
     pointLCD1->display(point1);
     
-    if (help_show) help->setText("up - открыть вопрос, начать игру");
+    help->setText("up - открыть вопрос, начать игру");
     
   break;
   case 4:
@@ -895,11 +942,11 @@ void Window::newLevel(int i)
     pointLCD0->display(point0);
     pointLCD1->display(point1);
     
-    if (help_show) help->setText("Игра наоборот: up - открыть вопрос, 1..6 - открыть вопрос, q - ком.1, w - ком.2");
+    help->setText("Игра наоборот: up - открыть вопрос, 1..6 - открыть вопрос, q - ком.1, w - ком.2");
   break;
   case 5:
     supergame = TRUE;
-    if (help_show) help->setText("a - скрыть ответы 1го игрока, q - таймер, del - повторный ответ, up - звук итог");
+    help->setText("a - скрыть ответы 1го игрока, q - таймер, del - повторный ответ, up - звук итог");
 
     biggamelayout = new QVBoxLayout;
     delete lowwgt->layout();
@@ -939,7 +986,7 @@ void Window::BadAnswer()
     game1 = FALSE;
     game2 = TRUE;
     
-    if (help_show) help->setText ("Игра №" + QString::number(level) + ", Раунд 2: 1...6 - открыть ответы, up - перечислить очки, del - не правильный ответ");
+    help->setText ("Игра №" + QString::number(level) + ", Раунд 2: 1...6 - открыть ответы, up - перечислить очки, del - не правильный ответ");
   }
 }
 
