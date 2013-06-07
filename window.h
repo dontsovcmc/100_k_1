@@ -39,17 +39,29 @@ QString answer[6];
 int num[6];
 };
 
+enum ROUND {
+  ROUND_1,
+  ROUND_2,
+  ROUND_3,
+  ROUND_OBR,
+  ROUND_SUPER, // = ROUND_MAX = 4
+  ROUND_LAST
+};
+
+#define MAX_ROUND ROUND_SUPER
+#define MAX_QUESTION 6
+
 class Window : public QWidget
 {
     Q_OBJECT
 
 public:
     Window();
+    ~Window();
   void setupGame();
   void setupLevel();
-  void loadFile(QString fileurl);
   void openAnswer(int i);
-    void setActiveCommand(int i);
+  void setActiveCommand(int i);
   void newLevel(int i);
   void BadAnswer();
   void clearBadAnswer();
@@ -61,6 +73,9 @@ public:
   void SetTitleLabel (int i);
   void setupTimerWindow();
   void startTimer60();
+
+  void LoadSettings(QString path);
+  void SaveSettings(QString path);
   
 public slots:
   void setupGameOk();
@@ -177,6 +192,7 @@ public:
   Question *curvopros, *vopros;
   QLabel *curbadlabel;
 
+  bool Rounds[ROUND_LAST]; //есть или нет каждый из раундов
   bool zhreby, game1, game2, supergame, obrat;
 };
 

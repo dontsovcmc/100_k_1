@@ -13,6 +13,7 @@
 #include <QLCDNumber>
 #include <QTimer>
 #include <QSound>
+#include <QTextCodec>
 
 #define WIN_POINT 80
 #define FONT_STYLE1 "Journal"
@@ -27,14 +28,19 @@
 #define TIMER2 20
 #define TIMER3 60
 
+#define COMPANYTITLE "DonSoft"
+#define APPTITLE "StoOne"
+
+#define SETT_FILE_PATH "base.ini"
+
 Window::Window()
 {
   help_show = FALSE;
-    font1 = new QFont;
+  font1 = new QFont;
   font1->setFamily(FONT_STYLE1);
   font1->setPointSize(FONT_SIZE1);
   
-    font2 = new QFont;
+  font2 = new QFont;
   font2->setFamily(FONT_STYLE1);
   font2->setPointSize(FONT_SIZE1);
   font2->setUnderline(TRUE);
@@ -62,7 +68,7 @@ Window::Window()
   
   help = new QLabel;
   mainL = new QVBoxLayout;
-    setupLevel();
+  setupLevel();
   setupTimerWindow();
 
   setLayout(mainL);
@@ -71,54 +77,136 @@ Window::Window()
   connect(timer, SIGNAL(timeout()), SLOT(updateCaption()));
   connect(this, SIGNAL(keyPressEvent(QKeyEvent * event)), this, SLOT(keyPressEvent(QKeyEvent * event)));
   
-    loadFile("base.txt");
-    
+  for (int i=0;i<ROUND_LAST;i++)
+    Rounds[i] = TRUE;
+
+  LoadSettings(SETT_FILE_PATH);
+
+  com0label->setText(command0name);
+  com1label->setText(command1name);  
+  
   level = 1;
   newLevel(level);
 }
 
-void Window::loadFile(QString fileurl)
+Window::~Window()
 {
-    QFile data(fileurl);
-  if (!data.open(QIODevice::ReadOnly)) return;
-  QTextStream in(&data);
-  char buf[1000];
+  SaveSettings(SETT_FILE_PATH);
+}
+
+static char szcommand0name[] = "szcommand0name";
+static char szcommand1name[] = "szcommand1name";
+static char szDefCommand0Name[] = "Команда 1";
+static char szDefCommand1Name[] = "Команда 2";
+static char szDefQuestion[] = "Вопрос";
+static char szDefAnswer[] = "Ответ";
+
+static char szROUND_1[] = "ROUND_1";
+static char szROUND_2[] = "ROUND_2";
+static char szROUND_3[] = "ROUND_3";
+static char szROUND_OBR[] = "ROUND_OBR";
+static char szROUND_SUPER[] = "ROUND_SUPER";
+
+static char sztime1[] = "time1";
+static char sztime2[] = "time2";
+static char sztime3[] = "time3";
+static char szwinpoint[] = "winpoint";
+
+static char szquestion[] = "ques";
+static char szanswer[] = "answ";
+static char szpoints[] = "points";
+
+void Window::LoadSettings(QString path)
+{
+  QSettings sett(path, QSettings::IniFormat);
+  sett.setIniCodec(QTextCodec::codecForName("Windows-1251"));
+
+  sett.beginGroup("MAIN");
   
-  data.readLine(buf, 100);
-  command0name = QString(buf);
-  command0name.remove("\n");
-  data.readLine(buf, 100);
-  command1name = QString(buf);
-    command1name.remove("\n");
-  
-  data.readLine(buf, 100);
-  time1  = QString(buf).toInt();
-  data.readLine(buf, 100);
-  time2  = QString(buf).toInt();
-  data.readLine(buf, 100);
-  time3  = QString(buf).toInt();
-  data.readLine(buf, 100);
-  winpoint  = QString(buf).toInt();
-  
-  com0label->setText(command0name);
-  com1label->setText(command1name);  
-  
-  vopros = new Question[4];
-  for (int i=0;i<4;i++)
+  Rounds[ROUND_1] = sett.value(szROUND_1,TRUE).toBool();
+  Rounds[ROUND_2] = sett.value(szROUND_2,TRUE).toBool();
+  Rounds[ROUND_3] = sett.value(szROUND_3,TRUE).toBool();
+  Rounds[ROUND_OBR] = sett.value(szROUND_OBR,TRUE).toBool();
+  Rounds[ROUND_SUPER] = sett.value(szROUND_SUPER,TRUE).toBool();
+  command0name = sett.value(szcommand0name,szDefCommand0Name).toString();
+  command1name = sett.value(szcommand1name,szDefCommand1Name).toString();
+    
+  time1 = sett.value(sztime1).toInt();
+  time2 = sett.value(sztime2).toInt();
+  time3 = sett.value(sztime3).toInt();
+  winpoint = sett.value(szwinpoint).toInt();
+
+  vopros = new Question[MAX_ROUND];
+  QString qkey, skeyAnsw;
+  for (int i=0;i<MAX_ROUND;i++)
   {
-    data.readLine(buf, 100);
-    vopros[i].name = QString(buf);
+    qkey = QString(szquestion);
+    qkey += QString::number(i);
+    vopros[i].name = sett.value(qkey,qkey).toString();
     vopros[i].name.remove("\n");
-    for (int j=0;j<6;j++)
+
+    for (int j=0;j<MAX_QUESTION;j++)
     { 
-      data.readLine(buf, 100);
-      vopros[i].answer[j] = QString(buf);
-      vopros[i].answer[j].remove("\n");
-      data.readLine(buf, 100);
-      vopros[i].num[j] = QString(buf).toInt();
+      skeyAnsw = qkey;
+      skeyAnsw+=QString(szanswer);
+      skeyAnsw+=QString::number(j);
+      vopros[i].answer[j] = sett.value(skeyAnsw,skeyAnsw).toString();
+      skeyAnsw = qkey;
+      skeyAnsw+=QString(szpoints);
+      skeyAnsw+=QString::number(j);
+      vopros[i].num[j]  = sett.value(skeyAnsw,skeyAnsw).toInt();
     }
   }
   curvopros = &vopros[0];
+
+  sett.endGroup();
+}
+
+void Window::SaveSettings(QString path)
+{
+  QSettings sett(path, QSettings::IniFormat);
+  sett.setIniCodec(QTextCodec::codecForName("Windows-1251"));
+
+  sett.beginGroup("MAIN");
+
+  sett.setValue(">>",QString("Включение/отключение раундов игры (true/false)"));
+  sett.setValue(szROUND_1,Rounds[ROUND_1]);
+  sett.setValue(szROUND_2,Rounds[ROUND_2]);
+  sett.setValue(szROUND_3,Rounds[ROUND_3]);
+  sett.setValue(szROUND_OBR,Rounds[ROUND_OBR]);
+  sett.setValue(szROUND_SUPER,Rounds[ROUND_SUPER]);
+
+  sett.setValue(">>",QString("Названия команд"));
+  sett.setValue(szcommand0name,command0name);
+  sett.setValue(szcommand1name,command1name);
+
+  
+  sett.setValue(sztime1,time1);
+  sett.setValue(sztime2,time2);
+  sett.setValue(sztime3,time3);
+  sett.setValue(szwinpoint,winpoint);
+
+  QString qkey, skeyAnsw;
+  for (int i=0;i<MAX_ROUND;i++)
+  {
+    qkey = QString(szquestion);
+    qkey += QString::number(i);
+    sett.setValue(qkey,vopros[i].name);
+   
+    for (int j=0;j<MAX_QUESTION;j++)
+    { 
+      skeyAnsw = qkey;
+      skeyAnsw+=QString(szanswer);
+      skeyAnsw+=QString::number(j);
+      sett.setValue(skeyAnsw,vopros[i].answer[j]);
+      skeyAnsw = qkey;
+      skeyAnsw+=QString(szpoints);
+      skeyAnsw+=QString::number(j);
+      sett.setValue(skeyAnsw,vopros[i].num[j]);
+    }
+  }
+
+  sett.endGroup();
 }
 
 void Window::setupLevel()
