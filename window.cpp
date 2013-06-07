@@ -16,13 +16,6 @@
 #include <QTextCodec>
 
 #define WIN_POINT 80
-#define FONT_STYLE1 "Journal"
-#define FONT_STYLE2 "Journal"
-#define FONT_STYLE3 "Journal"
-
-#define FONT_SIZE1 30
-#define FONT_SIZE2 30
-#define FONT_SIZE3 25
 
 #define TIMER1 15
 #define TIMER2 20
@@ -139,18 +132,22 @@ static char szpoints[] = "points";
 #define FONT_STYLE1 "Journal"
 #define FONT_STYLE2 "Journal"
 #define FONT_STYLE3 "Journal"
+#define FONT_STYLEQ "Journal"
 
 #define FONT_SIZE1 30
 #define FONT_SIZE2 30
 #define FONT_SIZE3 25
+#define FONT_SIZEQ 30
 
 static char szFontStyle1[] = "FontStyle1";
 static char szFontStyle2[] = "FontStyle2";
 static char szFontStyle3[] = "FontStyle3";
+static char szFontStyleQ[] = "FontStyleQuestion";
+
 static char szFontSize1[] = "FontSize1";
 static char szFontSize2[] = "FontSize2";
 static char szFontSize3[] = "FontSize3";
-
+static char szFontSizeQ[] = "FontSizeQuestion";
 
 void Window::LoadSettings(QString path)
 {
@@ -172,6 +169,9 @@ void Window::LoadSettings(QString path)
   time3 = sett.value(sztime3, TIMER3).toInt();
   winpoint = sett.value(szwinpoint,WIN_POINT).toInt();
 
+  fontQ = new QFont;
+  fontQ->setFamily(sett.value(szFontStyleQ,FONT_STYLEQ).toString());
+  fontQ->setPointSize(sett.value(szFontSizeQ,FONT_SIZEQ).toInt());
 
   font1 = new QFont;
   font1->setFamily(sett.value(szFontStyle1,FONT_STYLE1).toString());
@@ -238,6 +238,9 @@ void Window::SaveSettings(QString path)
 
   sett.setValue(szFontStyle3,fontNum->family());
   sett.setValue(szFontSize3,fontNum->pointSize());
+
+  sett.setValue(szFontStyleQ,fontQ->family());
+  sett.setValue(szFontSizeQ,fontQ->pointSize());
 
   sett.setValue(">>",QString("Названия команд"));
   sett.setValue(szcommand0name,command0name);
@@ -311,7 +314,7 @@ void Window::setupLevel()
   highwgt->setLayout(highL);
   question = new QLabel;
   question->setAlignment(Qt::AlignCenter);
-  question->setFont(*font1);
+  question->setFont(*fontQ);
   
   mainL->addWidget(question);
   mainL->addWidget(highwgt);

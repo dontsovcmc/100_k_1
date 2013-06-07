@@ -175,7 +175,7 @@ public:
         QLabel *seclabel;
 
   QFontMetrics *fontmetr1;
-  QFont *font1, *font2, *fontNum;
+  QFont *fontQ, *font1, *font2, *fontNum;
   QPainter *painter;
   QTimer *timer;
   
