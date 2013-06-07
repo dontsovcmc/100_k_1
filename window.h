@@ -48,6 +48,8 @@ enum ROUND {
   ROUND_LAST
 };
 
+#define WIN_ROUND ROUND_LAST
+
 #define MAX_ROUND ROUND_SUPER
 #define MAX_QUESTION 6
 #define MAX_BAD 3
@@ -79,7 +81,10 @@ public:
 
   void LoadSettings(QString path);
   void SaveSettings(QString path);
-  
+
+  bool GetNextLevel(int *plevel);
+  void CheckWin(int level);
+
 public slots:
   void setupGameOk();
   void keyPressEvent(QKeyEvent *event);
@@ -196,7 +201,11 @@ public:
   QLabel *curbadlabel;
 
   bool Rounds[ROUND_LAST]; //есть или нет каждый из раундов
-  bool zhreby, game1, game2, supergame, obrat;
+  bool zhreby, //жеребьевка какая команда играет 
+        game1, //играет первая команда. ответ каждого учатника проверяется до 3х промахов
+        game2, //один ответ от команды. угадали - очки им, нет - первой команде
+        supergame, //суперигра
+        obrat; //игра наоборот
 };
 
 #endif
