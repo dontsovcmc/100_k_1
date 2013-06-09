@@ -24,24 +24,28 @@
 #define COMPANYTITLE "DonSoft"
 #define APPTITLE "StoOne"
 
-#define SETT_FILE_PATH "base.ini"
 
 Window::Window()
+{
+  
+}
+
+void Window::StartGame()
 {
 
   help_show = FALSE;
 
-  LoadSettings(SETT_FILE_PATH);
-      
+  m_gameSettings.LoadSettings(SETT_FILE_PATH);
+
   pal3 = new QPalette;
   pal3->setColor(QPalette::Text, Qt::gray);
   pal = new QPalette;
   pal->setColor(QPalette::Background ,QColor(Qt::black));
-  
-//==========================
+
+  //==========================
 
   QSound::play("sound\\start.wav");
-  
+
   help = new QLabel;
   help->setVisible(help_show);
   mainL = new QVBoxLayout;
@@ -49,17 +53,17 @@ Window::Window()
   setupTimerWindow();
 
   setLayout(mainL);
-  
+
   timer = new QTimer(this);
   connect(timer, SIGNAL(timeout()), SLOT(updateCaption()));
   connect(this, SIGNAL(keyPressEvent(QKeyEvent * event)), this, SLOT(keyPressEvent(QKeyEvent * event)));
-  
 
-  com0label->setText(command0name);
-  com1label->setText(command1name);  
+
+  com0label->setText(m_gameSettings.command0name);
+  com1label->setText(m_gameSettings.command1name);  
 
   point0 = point1 = 0;
-
+  curvopros = &m_gameSettings.vopros[0];
   level = -1;
   GetNextLevel(&level);
   newLevel(level);
@@ -79,7 +83,7 @@ void Window::CheckWin(int level)
       break;
   }
 
-  if (sum >= winpoint)
+  if (sum >= m_gameSettings.winpoint)
   {
     QSound::play("sound\\win.wav");  
   }
@@ -93,7 +97,7 @@ bool Window::GetNextLevel(int *plevel)
   }
   else
   for (int i=*plevel+1;i<ROUND_LAST;i++)
-    if (Rounds[i])
+    if (m_gameSettings.Rounds[i])
     { *plevel = i;
       return TRUE;
     }
@@ -103,7 +107,6 @@ bool Window::GetNextLevel(int *plevel)
 
 Window::~Window()
 {
-  SaveSettings(SETT_FILE_PATH);
 }
 
 static char szcommand0name[] = "szcommand0name";
@@ -149,7 +152,7 @@ static char szFontSize2[] = "FontSize2";
 static char szFontSize3[] = "FontSize3";
 static char szFontSizeQ[] = "FontSizeQuestion";
 
-void Window::LoadSettings(QString path)
+void GameSettings::LoadSettings(QString path)
 {
   QSettings sett(path, QSettings::IniFormat);
   sett.setIniCodec(QTextCodec::codecForName("Windows-1251"));
@@ -169,28 +172,22 @@ void Window::LoadSettings(QString path)
   time3 = sett.value(sztime3, TIMER3).toInt();
   winpoint = sett.value(szwinpoint,WIN_POINT).toInt();
 
-  fontQ = new QFont;
-  fontQ->setFamily(sett.value(szFontStyleQ,FONT_STYLEQ).toString());
-  fontQ->setPointSize(sett.value(szFontSizeQ,FONT_SIZEQ).toInt());
+  fontQ.setFamily(sett.value(szFontStyleQ,FONT_STYLEQ).toString());
+  fontQ.setPointSize(sett.value(szFontSizeQ,FONT_SIZEQ).toInt());
 
-  font1 = new QFont;
-  font1->setFamily(sett.value(szFontStyle1,FONT_STYLE1).toString());
-  font1->setPointSize(sett.value(szFontSize1,FONT_SIZE1).toInt());
+  font1.setFamily(sett.value(szFontStyle1,FONT_STYLE1).toString());
+  font1.setPointSize(sett.value(szFontSize1,FONT_SIZE1).toInt());
 
-  font2 = new QFont;
-  font2->setFamily(sett.value(szFontStyle2,FONT_STYLE2).toString());
-  font2->setPointSize(sett.value(szFontSize2,FONT_SIZE2).toInt());
-  font2->setUnderline(TRUE);
-  font2->setBold(TRUE);
+  font2.setFamily(sett.value(szFontStyle2,FONT_STYLE2).toString());
+  font2.setPointSize(sett.value(szFontSize2,FONT_SIZE2).toInt());
+  font2.setUnderline(TRUE);
+  font2.setBold(TRUE);
 
-  fontNum = new QFont;
-  fontNum->setFamily(sett.value(szFontStyle3,FONT_STYLE3).toString());
-  fontNum->setPointSize(sett.value(szFontSize3,FONT_SIZE3).toInt());
-  fontNum->setUnderline(FALSE);
-  fontNum->setBold(FALSE);
+  fontNum.setFamily(sett.value(szFontStyle3,FONT_STYLE3).toString());
+  fontNum.setPointSize(sett.value(szFontSize3,FONT_SIZE3).toInt());
+  fontNum.setUnderline(FALSE);
+  fontNum.setBold(FALSE);
 
-
-  vopros = new Question[MAX_ROUND];
   QString qkey, skeyAnsw;
   for (int i=0;i<MAX_ROUND;i++)
   {
@@ -211,38 +208,35 @@ void Window::LoadSettings(QString path)
       vopros[i].num[j]  = sett.value(skeyAnsw,skeyAnsw).toInt();
     }
   }
-  curvopros = &vopros[0];
 
   sett.endGroup();
 }
 
-void Window::SaveSettings(QString path)
+void GameSettings::SaveSettings(QString path)
 {
   QSettings sett(path, QSettings::IniFormat);
   sett.setIniCodec(QTextCodec::codecForName("Windows-1251"));
 
   sett.beginGroup("MAIN");
 
-  sett.setValue(">>",QString("Включение/отключение раундов игры (true/false)"));
   sett.setValue(szROUND_1,Rounds[ROUND_1]);
   sett.setValue(szROUND_2,Rounds[ROUND_2]);
   sett.setValue(szROUND_3,Rounds[ROUND_3]);
   sett.setValue(szROUND_OBR,Rounds[ROUND_OBR]);
   sett.setValue(szROUND_SUPER,Rounds[ROUND_SUPER]);
 
-  sett.setValue(szFontStyle1,font1->family());
-  sett.setValue(szFontSize1,font1->pointSize());
+  sett.setValue(szFontStyle1,font1.family());
+  sett.setValue(szFontSize1,font1.pointSize());
 
-  sett.setValue(szFontStyle2,font2->family());
-  sett.setValue(szFontSize2,font2->pointSize());
+  sett.setValue(szFontStyle2,font2.family());
+  sett.setValue(szFontSize2,font2.pointSize());
 
-  sett.setValue(szFontStyle3,fontNum->family());
-  sett.setValue(szFontSize3,fontNum->pointSize());
+  sett.setValue(szFontStyle3,fontNum.family());
+  sett.setValue(szFontSize3,fontNum.pointSize());
 
-  sett.setValue(szFontStyleQ,fontQ->family());
-  sett.setValue(szFontSizeQ,fontQ->pointSize());
+  sett.setValue(szFontStyleQ,fontQ.family());
+  sett.setValue(szFontSizeQ,fontQ.pointSize());
 
-  sett.setValue(">>",QString("Названия команд"));
   sett.setValue(szcommand0name,command0name);
   sett.setValue(szcommand1name,command1name);
 
@@ -298,11 +292,11 @@ void Window::setupLevel()
   
   com0label = new QLabel;
   com1label = new QLabel;
-  com0label->setFont(*font1);
-  com1label->setFont(*font1);
+  com0label->setFont(m_gameSettings.font1);
+  com1label->setFont(m_gameSettings.font1);
   com1label->setAlignment(Qt::AlignRight);
-  com0label->setText(command0name);
-  com1label->setText(command1name);
+  com0label->setText(m_gameSettings.command0name);
+  com1label->setText(m_gameSettings.command1name);
   highL->addWidget(com0label);
   highL->addWidget(pointLCD);
   highL->addWidget(com1label);
@@ -314,7 +308,7 @@ void Window::setupLevel()
   highwgt->setLayout(highL);
   question = new QLabel;
   question->setAlignment(Qt::AlignCenter);
-  question->setFont(*fontQ);
+  question->setFont(m_gameSettings.fontQ);
   
   mainL->addWidget(question);
   mainL->addWidget(highwgt);
@@ -327,7 +321,7 @@ void Window::setupLevel()
      QString url;
      url = QString("bmp\\answ_")+QString::number(i+1)+QString(".bmp");
      anslabel[i] = new QLabel;
-     anslabel[i]->setFont(*font1);
+     anslabel[i]->setFont(m_gameSettings.font1);
      anslabel[i]->setPixmap(QPixmap(url));
      ansL->addWidget(anslabel[i]);
   }
@@ -455,28 +449,28 @@ void Window::setupBigGame()
     user1lbl[i] = new QLineEdit;
     user1voice[i] = new QLineEdit;
 
-    user0num[i]->setFont(*fontNum);
+    user0num[i]->setFont(m_gameSettings.fontNum);
     user0num[i]->setFixedSize(50,60);
     if (i != 5) 
       user0num[i]->setText(QString::number(i+1)+".");
     user0num[i]->setPalette(*pal3);
     user0num[i]->setReadOnly(TRUE);      
     
-    user0lbl[i]->setFont(*font1);
+    user0lbl[i]->setFont(m_gameSettings.font1);
     user0lbl[i]->setFixedSize(400,60);
-    user0voice[i]->setFont(*font1);
+    user0voice[i]->setFont(m_gameSettings.font1);
     user0voice[i]->setFixedSize(100,60);
 
-    user1num[i]->setFont(*fontNum);
+    user1num[i]->setFont(m_gameSettings.fontNum);
     user1num[i]->setFixedSize(50,60);
     if (i != 5) 
       user1num[i]->setText(QString::number(i+1)+".");
     user1num[i]->setPalette(*pal3);
     user1num[i]->setReadOnly(TRUE);  
     
-    user1lbl[i]->setFont(*font1);
+    user1lbl[i]->setFont(m_gameSettings.font1);
     user1lbl[i]->setFixedSize(400,60);
-    user1voice[i]->setFont(*font1);
+    user1voice[i]->setFont(m_gameSettings.font1);
     user1voice[i]->setFixedSize(100,60);
     user1lbl[i]->setAlignment(Qt::AlignRight);
   
@@ -510,9 +504,9 @@ void Window::setupBigGame()
   hboxlayout->addWidget( user1wgt);
 
   if (point0 >= point1) 
-    str = command0name; 
+    str = m_gameSettings.command0name; 
   else 
-    str = command1name;
+    str = m_gameSettings.command1name;
 
   connect(timerButton, SIGNAL(clicked()), this, SLOT(startTimer()));
   connect(but, SIGNAL(clicked()), this, SLOT(calcsum()));
@@ -552,7 +546,7 @@ void Window::hideAnswer()
 
 void Window::startTimer()
 {
-  if (!user0sum) t = time1; else t = time2;
+  if (!user0sum) t = m_gameSettings.time1; else t = m_gameSettings.time2;
   if (t < 0) return;
   Timer(t);
 }    
@@ -583,13 +577,13 @@ void Window::openAnswer(int i)
 void Window::setActiveCommand(int i)
 {
   if (i) { activecommand = 1;
-  com1label->setFont(*font2);  
-  com0label->setFont(*font1);
+  com1label->setFont(m_gameSettings.font2);  
+  com0label->setFont(m_gameSettings.font1);
   curbadlabel = bad1label[0];
   }
   else { activecommand = 0; 
-  com0label->setFont(*font2);  
-  com1label->setFont(*font1);
+  com0label->setFont(m_gameSettings.font2);  
+  com1label->setFont(m_gameSettings.font1);
   curbadlabel = bad0label[0];
   }
 }
@@ -632,16 +626,16 @@ void Window::setupGame()
   sg_button = new QPushButton;
   
   sg_button->setText("OK");
-  sg_button->setFont(*fontNum);
+  sg_button->setFont(m_gameSettings.fontNum);
   sg_lbl1->setText("Команда 1");
-  sg_lbl1->setFont(*fontNum);
+  sg_lbl1->setFont(m_gameSettings.fontNum);
   sg_lbl2->setText("Команда 2");
-  sg_lbl2->setFont(*fontNum);
+  sg_lbl2->setFont(m_gameSettings.fontNum);
   sg_setuplbl->setText("Введите названия команд");
   sg_name1->setFixedSize(300,60);
-  sg_name1->setFont(*font1);
+  sg_name1->setFont(m_gameSettings.font1);
   sg_name2->setFixedSize(300,60);
-  sg_name2->setFont(*font1);
+  sg_name2->setFont(m_gameSettings.font1);
   
   sg_setup1v->addWidget(sg_lbl1);
   sg_setup1v->addWidget(sg_name1);
@@ -668,10 +662,10 @@ void Window::setupGame()
 
 void Window::setupGameOk()
 {
-  command0name = sg_name1->text();
-  command1name = sg_name2->text();
-  com0label->setText(command0name);
-  com1label->setText(command1name);
+  m_gameSettings.command0name = sg_name1->text();
+  m_gameSettings.command1name = sg_name2->text();
+  com0label->setText(m_gameSettings.command0name);
+  com1label->setText(m_gameSettings.command1name);
   sg_setupgame->close();
 }
 
@@ -841,7 +835,7 @@ void Window::keyPressEvent(QKeyEvent * event)
        }
     break;
     case Qt::Key_Delete: 
-      if (level !=ROUND_SUPER) 
+      if (level != ROUND_SUPER && !zhreby) 
         BadAnswer(); 
       else 
         Beep();
@@ -861,10 +855,10 @@ void Window::setupTimerWindow()
 {
   timerlbl = new QLabel;
   timerlbl->setText("Осталось");
-  timerlbl->setFont(*font1);
+  timerlbl->setFont(m_gameSettings.font1);
   
   seclabel = new QLabel;
-  seclabel->setFont(*font1);
+  seclabel->setFont(m_gameSettings.font1);
   seclabel->setAlignment(Qt::AlignCenter);
   
   timerVl = new QVBoxLayout;
@@ -938,7 +932,7 @@ void Window::newLevel(int i)
   zhreby = game1 = game2 = supergame = obrat = FALSE;
   QSound::play("sound\\level.wav"); 
   SetTitleLabel(i);
-  curvopros = &vopros[i];
+  curvopros = &m_gameSettings.vopros[i];
   openanswer = 0;
   points = 0;      
   winner = FALSE;
@@ -955,8 +949,8 @@ void Window::newLevel(int i)
     clearBadAnswer();
     closeAnswers();  
     
-    com0label->setFont(*font1);
-    com1label->setFont(*font1);
+    com0label->setFont(m_gameSettings.font1);
+    com1label->setFont(m_gameSettings.font1);
   
     gamelabel0->setPixmap(QPixmap(str));
     gamelabel1->setPixmap(QPixmap(str));
@@ -1013,7 +1007,7 @@ void Window::BadAnswer()
   if (badAnswer[0] > 0 && badAnswer[1] > 0) 
     return;
   
-  QSound::play("sound\\bad.wav"); 
+  Beep();
 
   if (activecommand) 
     curbadlabel = bad1label[badAnswer[activecommand]]; 

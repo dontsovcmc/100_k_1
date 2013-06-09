@@ -2,6 +2,7 @@
 #include <QtGui>
 
 #include "window.h"
+#include "startwnd.h"
 
 int main(int argc, char *argv[])
 {
@@ -11,12 +12,19 @@ int main(int argc, char *argv[])
   QTextCodec::setCodecForTr(cyrillicCodec);
   QTextCodec::setCodecForLocale(cyrillicCodec);
   QTextCodec::setCodecForCStrings(cyrillicCodec);
-  
+
   Window window;
-  
-    window.setWindowTitle("ярн й ндмнлс v1.2");
-  
+  StartDlg dialog;
+  if (QDialog::Accepted == dialog.exec())
+  {
+    window.StartGame();
+    window.setWindowTitle("ярн й ндмнлс v1.3");
+
     window.resize(850, 750);
     window.show();
+
     return app.exec(); 
+  }
+ 
+  return 0;
 }

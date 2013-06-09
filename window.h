@@ -56,6 +56,27 @@ enum ROUND {
 
 #define MAX_SUPERGAME_QUESTION 5
 
+#define SETT_FILE_PATH "base.ini"
+
+class GameSettings
+{
+public:
+  GameSettings() {}
+  ~GameSettings() {}
+  void LoadSettings(QString path);
+  void SaveSettings(QString path);
+
+
+  int winpoint;
+  int time1, time2, time3;
+  QString command0name, command1name; 
+  bool Rounds[ROUND_LAST]; //есть или нет каждый из раундов
+
+  QFont fontQ, font1, font2, fontNum;
+
+  Question vopros[MAX_ROUND];
+};
+
 class Window : public QWidget
 {
     Q_OBJECT
@@ -79,9 +100,6 @@ public:
   void setupTimerWindow();
   void startTimer60();
 
-  void LoadSettings(QString path);
-  void SaveSettings(QString path);
-
   bool GetNextLevel(int *plevel);
   void CheckWin(int level);
 
@@ -92,7 +110,8 @@ public slots:
   void calcsum();
   void startTimer();
   void hideAnswer();
-  
+  void StartGame();
+
 public: 
   /*layouts in levels */
   QVBoxLayout *mainL;
@@ -175,11 +194,10 @@ public:
         QLabel *seclabel;
 
   QFontMetrics *fontmetr1;
-  QFont *fontQ, *font1, *font2, *fontNum;
   QPainter *painter;
   QTimer *timer;
   
-  int winpoint;
+  
   int level;
   int activecommand;
   int points;
@@ -189,23 +207,22 @@ public:
   bool winner;
   int user0sum;
   int t;
-  int time1, time2, time3;
   bool timer_on;
   bool help_show;
   QString str;
-  QString command0name, command1name;
   QPalette *pal3;
   QPalette *pal;
 
-  Question *curvopros, *vopros;
+  Question *curvopros;
   QLabel *curbadlabel;
 
-  bool Rounds[ROUND_LAST]; //есть или нет каждый из раундов
   bool zhreby, //жеребьевка какая команда играет 
         game1, //играет первая команда. ответ каждого учатника проверяется до 3х промахов
         game2, //один ответ от команды. угадали - очки им, нет - первой команде
         supergame, //суперигра
         obrat; //игра наоборот
+
+  GameSettings m_gameSettings;
 };
 
 #endif
