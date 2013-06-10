@@ -33,10 +33,13 @@ class QSettings;
 
 #define MAS_SIZE 2000
 
+#define MAX_ANSWER 6
+#define MAX_BAD 3
+
 struct Question {
 QString name;
-QString answer[6];
-int num[6];
+QString answer[MAX_ANSWER];
+int     num[MAX_ANSWER];
 };
 
 enum ROUND {
@@ -51,8 +54,6 @@ enum ROUND {
 #define WIN_ROUND ROUND_LAST
 
 #define MAX_ROUND ROUND_SUPER
-#define MAX_QUESTION 6
-#define MAX_BAD 3
 
 #define MAX_SUPERGAME_QUESTION 5
 
@@ -68,7 +69,7 @@ public:
 
 
   int winpoint;
-  int time1, time2, time3;
+  int time1, time2, timeRoundObr;
   QString command0name, command1name; 
   bool Rounds[ROUND_LAST]; //есть или нет каждый из раундов
 

@@ -7,36 +7,43 @@
 #include "window.h"
 
 #include "ui_GeneralGameSett.h"
+#include "ui_MainSett.h"
+#include "ui_QuestionSett.h"
 
 class QTabWidget;
 class QDialogButtonBox;
+class QSpinBox;
 
 class GeneralGameTab : public QWidget
 {
   Q_OBJECT
 
 public:
-  GeneralGameTab(GameSettings *psett, QWidget *parent = 0);
+  GeneralGameTab(GameSettings *psett);
 
   Ui::Form generalGameUI;
 private:
-  GameSettings localSettings;
 };
 
 class MainSettingsTab : public QWidget
 { Q_OBJECT
 public:
-  MainSettingsTab(GameSettings *psett, QWidget *parent = 0);
+  MainSettingsTab(GameSettings *psett);
+
+  Ui::FormMain MainUI;
 private:
-  GameSettings localSettings;
 };
 
 class QuestionTab : public QWidget
 { Q_OBJECT
 public:
-  QuestionTab(GameSettings *psett, QWidget *parent = 0);
+
+  Ui::FormQuestion QuestionUI;
+  QuestionTab(Question *pQuestion);
+
+  QLineEdit *Answers[MAX_ANSWER];
+  QSpinBox  *Points[MAX_ANSWER];
 private:
-  GameSettings localSettings;
 };
 
 

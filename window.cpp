@@ -169,7 +169,7 @@ void GameSettings::LoadSettings(QString path)
     
   time1 = sett.value(sztime1, TIMER1).toInt();
   time2 = sett.value(sztime2, TIMER2).toInt();
-  time3 = sett.value(sztime3, TIMER3).toInt();
+  timeRoundObr = sett.value(sztime3, TIMER3).toInt();
   winpoint = sett.value(szwinpoint,WIN_POINT).toInt();
 
   fontQ.setFamily(sett.value(szFontStyleQ,FONT_STYLEQ).toString());
@@ -196,7 +196,7 @@ void GameSettings::LoadSettings(QString path)
     vopros[i].name = sett.value(qkey,qkey).toString();
     vopros[i].name.remove("\n");
 
-    for (int j=0;j<MAX_QUESTION;j++)
+    for (int j=0;j<MAX_ANSWER;j++)
     { 
       skeyAnsw = qkey;
       skeyAnsw+=QString(szanswer);
@@ -243,7 +243,7 @@ void GameSettings::SaveSettings(QString path)
   
   sett.setValue(sztime1,time1);
   sett.setValue(sztime2,time2);
-  sett.setValue(sztime3,time3);
+  sett.setValue(sztime3,timeRoundObr);
   sett.setValue(szwinpoint,winpoint);
 
   QString qkey, skeyAnsw;
@@ -253,7 +253,7 @@ void GameSettings::SaveSettings(QString path)
     qkey += QString::number(i);
     sett.setValue(qkey,vopros[i].name);
    
-    for (int j=0;j<MAX_QUESTION;j++)
+    for (int j=0;j<MAX_ANSWER;j++)
     { 
       skeyAnsw = qkey;
       skeyAnsw+=QString(szanswer);
@@ -316,7 +316,7 @@ void Window::setupLevel()
 
   ansL = new QVBoxLayout;
 
-  for (int i=0;i<MAX_QUESTION+1;i++) 
+  for (int i=0;i<MAX_ANSWER+1;i++) 
   {
      QString url;
      url = QString("bmp\\answ_")+QString::number(i+1)+QString(".bmp");
@@ -440,7 +440,7 @@ void Window::setupBigGame()
   timerButton = new QPushButton("Таймер");
   timerButton->setFixedSize(150,40);
   
-  for (int i=0;i<MAX_QUESTION;i++)
+  for (int i=0;i<MAX_ANSWER;i++)
   {
     user0num[i] = new QLineEdit;
     user0lbl[i] = new QLineEdit;
@@ -546,13 +546,16 @@ void Window::hideAnswer()
 
 void Window::startTimer()
 {
-  if (!user0sum) t = m_gameSettings.time1; else t = m_gameSettings.time2;
-  if (t < 0) return;
+  if (!user0sum) 
+    t = m_gameSettings.time1; 
+  else 
+    t = m_gameSettings.time2;
+  if (t < 0) 
+    return;
   Timer(t);
 }    
 void Window::openAnswer(int i)
 {
-  
   if (anslabel[i]->text().size() > 2) 
     return;
   
@@ -780,10 +783,10 @@ void Window::keyPressEvent(QKeyEvent * event)
                 }
               }
               else 
-              if (game1 && openanswer < MAX_QUESTION) 
+              if (game1 && openanswer < MAX_ANSWER) 
                 return; //играет 1я команда
               else 
-              if (game1 && openanswer == MAX_QUESTION)
+              if (game1 && openanswer == MAX_ANSWER)
               {
                 addPoint(activecommand);
                 help->setText ("Игра №" + QString::number(level+1) + ", Раунд 2: up - следующая игра");
@@ -811,7 +814,7 @@ void Window::keyPressEvent(QKeyEvent * event)
               if (zhreby) //жеребьевка
               {    
                 question->setText(curvopros->name);
-                Timer(TIMER3);
+                Timer(m_gameSettings.timeRoundObr);
                 if (openanswer == 0) 
                 {
                   zhreby = FALSE;
@@ -819,7 +822,7 @@ void Window::keyPressEvent(QKeyEvent * event)
                 }
               }
               else 
-              if (openanswer == MAX_QUESTION )
+              if (openanswer == MAX_ANSWER )
               {
                 if (GetNextLevel(&level))
                   newLevel(level);
@@ -1030,7 +1033,7 @@ void Window::BadAnswer()
 
 void Window::closeAnswers()
 {
-  for (int i=0;i<MAX_QUESTION;i++) 
+  for (int i=0;i<MAX_ANSWER;i++) 
   {
      QString url;
      url = QString("bmp\\answ_")+QString::number(i+1)+QString(".bmp");
