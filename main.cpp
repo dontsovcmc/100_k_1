@@ -2,7 +2,7 @@
 #include <QtGui>
 
 #include "window.h"
-#include "startwnd.h"
+#include "startDlg.h"
 
 int main(int argc, char *argv[])
 {
@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
   if (QDialog::Accepted == dialog.exec())
   {
     window.StartGame();
-    window.setWindowTitle("ярн й ндмнлс v1.3");
+    window.setWindowTitle("ярн й ндмнлс v2.0");
 
     window.resize(850, 750);
     window.show();

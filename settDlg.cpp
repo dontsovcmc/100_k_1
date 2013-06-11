@@ -66,7 +66,7 @@ void SettingsDialog::accept()
     
     for (int j=0;j<MAX_ANSWER;j++)
     { pQ->answer[j] = m_pQuestionTab[i]->Answers[j]->text();
-      pQ->name[j] = m_pQuestionTab[i]->Points[j]->value();
+      pQ->num[j] = m_pQuestionTab[i]->Points[j]->value();
     }
   }
   //--------------

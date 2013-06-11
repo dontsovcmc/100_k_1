@@ -55,7 +55,7 @@
      <x>10</x>
      <y>70</y>
      <width>261</width>
-     <height>81</height>
+     <height>111</height>
     </rect>
    </property>
    <property name="title">
@@ -107,32 +107,32 @@
      <string>Время на подготовку у игрока 2, сек</string>
     </property>
    </widget>
-  </widget>
-  <widget class="QSpinBox" name="spinWinPoints">
-   <property name="geometry">
-    <rect>
-     <x>211</x>
-     <y>160</y>
-     <width>51</width>
-     <height>22</height>
-    </rect>
-   </property>
-   <property name="maximum">
-    <number>1000</number>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_7">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>160</y>
-     <width>171</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Очков для выигрыша команды:</string>
-   </property>
+   <widget class="QLabel" name="label_7">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>80</y>
+      <width>171</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Очков для выигрыша команды:</string>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="spinWinPoints">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>80</y>
+      <width>51</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="maximum">
+     <number>1000</number>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources/>

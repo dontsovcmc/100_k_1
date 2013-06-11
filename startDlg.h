@@ -17,10 +17,12 @@ private:
   QPushButton *startButton;
   QPushButton *settingsButton;
   QPushButton *exitButton;
+  QPushButton *helpButton;
 
   SettingsDialog settDlg;
 public slots:
   void setSettings();
+  void manual();
 };
 
 #endif
