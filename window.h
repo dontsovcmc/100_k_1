@@ -73,7 +73,7 @@ public:
   QString command0name, command1name; 
   bool Rounds[ROUND_LAST]; //есть или нет каждый из раундов
 
-  QFont fontQ, font1, font2, fontNum;
+  QFont fontQ, fontTeamTitle, fontTeamTitleBU, fontAnswer, fontService;
 
   Question vopros[MAX_ROUND];
 };

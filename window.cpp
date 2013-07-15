@@ -131,26 +131,45 @@ static char szquestion[] = "ques";
 static char szanswer[] = "answ";
 static char szpoints[] = "points";
 
+#define FONT_STYLEQ       "Journal"
+#define FONT_SIZEQ        30
+#define FONT_BOLDQ        FALSE
+#define FONT_ITALICQ      FALSE
 
-#define FONT_STYLE1 "Journal"
-#define FONT_STYLE2 "Journal"
-#define FONT_STYLE3 "Journal"
-#define FONT_STYLEQ "Journal"
+#define FONT_STYLE_TEAM   "Journal"
+#define FONT_SIZE_TEAM    30
+#define FONT_BOLD_TEAM    FALSE
+#define FONT_ITALIC_TEAM  FALSE
 
-#define FONT_SIZE1 30
-#define FONT_SIZE2 30
-#define FONT_SIZE3 25
-#define FONT_SIZEQ 30
+#define FONT_STYLE_ANS   "Journal"
+#define FONT_SIZE_ANS    25
+#define FONT_BOLD_ANS    FALSE
+#define FONT_ITALIC_ANS  FALSE
 
-static char szFontStyle1[] = "FontStyle1";
-static char szFontStyle2[] = "FontStyle2";
-static char szFontStyle3[] = "FontStyle3";
+#define FONT_STYLE_SERV   "Journal"
+#define FONT_SIZE_SERV    25
+#define FONT_BOLD_SERV    FALSE
+#define FONT_ITALIC_SERV  FALSE
+
 static char szFontStyleQ[] = "FontStyleQuestion";
-
-static char szFontSize1[] = "FontSize1";
-static char szFontSize2[] = "FontSize2";
-static char szFontSize3[] = "FontSize3";
 static char szFontSizeQ[] = "FontSizeQuestion";
+static char szFontBoldQ[] = "FontBoldQ";
+static char szFontItalicQ[] = "FontItalicQ";
+
+static char szFontStyleTT[] = "FontStyleTT";
+static char szFontSizeTT[] = "FontSizeTT";
+static char szFontBoldTT[] = "FontBoldTT";
+static char szFontItalicTT[] = "FontItalicTT";
+
+static char szFontStyleAns[] = "FontStyleAns";
+static char szFontSizeAns[] = "FontSizeAns";
+static char szFontBoldAns[] = "FontBoldAns";
+static char szFontItalicAns[] = "FontItalicAns";
+
+static char szFontStyleService[] = "FontStyleService";
+static char szFontSizeService[] = "FontSizeService";
+static char szFontBoldService[] = "FontBoldService";
+static char szFontItalicService[] = "FontItalicService";
 
 void GameSettings::LoadSettings(QString path)
 {
@@ -174,19 +193,27 @@ void GameSettings::LoadSettings(QString path)
 
   fontQ.setFamily(sett.value(szFontStyleQ,FONT_STYLEQ).toString());
   fontQ.setPointSize(sett.value(szFontSizeQ,FONT_SIZEQ).toInt());
+  fontQ.setBold(sett.value(szFontBoldQ,FONT_BOLDQ).toBool());
+  fontQ.setItalic(sett.value(szFontItalicQ,FONT_ITALICQ).toBool());
 
-  font1.setFamily(sett.value(szFontStyle1,FONT_STYLE1).toString());
-  font1.setPointSize(sett.value(szFontSize1,FONT_SIZE1).toInt());
+  fontTeamTitle.setFamily(sett.value(szFontStyleTT,FONT_STYLE_TEAM).toString());
+  fontTeamTitle.setPointSize(sett.value(szFontSizeTT,FONT_SIZE_TEAM).toInt());
+  fontTeamTitle.setBold(sett.value(szFontBoldTT,FONT_BOLD_TEAM).toBool());
+  fontTeamTitle.setItalic(sett.value(szFontItalicTT,FONT_ITALIC_TEAM).toBool());
 
-  font2.setFamily(sett.value(szFontStyle2,FONT_STYLE2).toString());
-  font2.setPointSize(sett.value(szFontSize2,FONT_SIZE2).toInt());
-  font2.setUnderline(TRUE);
-  font2.setBold(TRUE);
+  fontTeamTitleBU = fontTeamTitle;
+  fontTeamTitleBU.setBold(TRUE);
+  fontTeamTitleBU.setUnderline(TRUE);
 
-  fontNum.setFamily(sett.value(szFontStyle3,FONT_STYLE3).toString());
-  fontNum.setPointSize(sett.value(szFontSize3,FONT_SIZE3).toInt());
-  fontNum.setUnderline(FALSE);
-  fontNum.setBold(FALSE);
+  fontAnswer.setFamily(sett.value(szFontStyleAns,FONT_STYLE_ANS).toString());
+  fontAnswer.setPointSize(sett.value(szFontSizeAns,FONT_SIZE_ANS).toInt());
+  fontAnswer.setBold(sett.value(szFontBoldAns,FONT_BOLD_ANS).toBool());
+  fontAnswer.setItalic(sett.value(szFontItalicAns,FONT_ITALIC_ANS).toBool());
+
+  fontService.setFamily(sett.value(szFontStyleService,FONT_STYLE_SERV).toString());
+  fontService.setPointSize(sett.value(szFontSizeService,FONT_SIZE_SERV).toInt());
+  fontService.setBold(sett.value(szFontBoldService,FONT_BOLD_SERV).toBool());
+  fontService.setItalic(sett.value(szFontItalicService,FONT_ITALIC_SERV).toBool());
 
   QString qkey, skeyAnsw;
   for (int i=0;i<MAX_ROUND;i++)
@@ -225,17 +252,25 @@ void GameSettings::SaveSettings(QString path)
   sett.setValue(szROUND_OBR,Rounds[ROUND_OBR]);
   sett.setValue(szROUND_SUPER,Rounds[ROUND_SUPER]);
 
-  sett.setValue(szFontStyle1,font1.family());
-  sett.setValue(szFontSize1,font1.pointSize());
+  sett.setValue(szFontStyleAns,fontAnswer.family());
+  sett.setValue(szFontSizeAns,fontAnswer.pointSize());
+  sett.setValue(szFontBoldAns,fontAnswer.bold());
+  sett.setValue(szFontItalicAns,fontAnswer.italic());
 
-  sett.setValue(szFontStyle2,font2.family());
-  sett.setValue(szFontSize2,font2.pointSize());
+  sett.setValue(szFontStyleTT,fontTeamTitle.family());
+  sett.setValue(szFontSizeTT,fontTeamTitle.pointSize());
+  sett.setValue(szFontBoldTT,fontTeamTitle.bold());
+  sett.setValue(szFontItalicTT,fontTeamTitle.italic());
 
-  sett.setValue(szFontStyle3,fontNum.family());
-  sett.setValue(szFontSize3,fontNum.pointSize());
+  sett.setValue(szFontStyleService,fontService.family());
+  sett.setValue(szFontSizeService,fontService.pointSize());
+  sett.setValue(szFontBoldService,fontService.bold());
+  sett.setValue(szFontItalicService,fontService.italic());
 
   sett.setValue(szFontStyleQ,fontQ.family());
   sett.setValue(szFontSizeQ,fontQ.pointSize());
+  sett.setValue(szFontBoldQ,fontQ.bold());
+  sett.setValue(szFontItalicQ,fontQ.italic());
 
   sett.setValue(szcommand0name,command0name);
   sett.setValue(szcommand1name,command1name);
@@ -273,7 +308,7 @@ void Window::setupLevel()
 {
   
   pointLCD = new QLCDNumber;
-    pointLCD->setDecMode();
+  pointLCD->setDecMode();
   pointLCD->setPalette(*pal);
   pointLCD->setSegmentStyle(QLCDNumber::Filled);
   
@@ -292,8 +327,8 @@ void Window::setupLevel()
   
   com0label = new QLabel;
   com1label = new QLabel;
-  com0label->setFont(m_gameSettings.font1);
-  com1label->setFont(m_gameSettings.font1);
+  com0label->setFont(m_gameSettings.fontTeamTitle);
+  com1label->setFont(m_gameSettings.fontTeamTitle);
   com1label->setAlignment(Qt::AlignRight);
   com0label->setText(m_gameSettings.command0name);
   com1label->setText(m_gameSettings.command1name);
@@ -321,7 +356,7 @@ void Window::setupLevel()
      QString url;
      url = QString("bmp\\answ_")+QString::number(i+1)+QString(".bmp");
      anslabel[i] = new QLabel;
-     anslabel[i]->setFont(m_gameSettings.font1);
+     anslabel[i]->setFont(m_gameSettings.fontAnswer);
      anslabel[i]->setPixmap(QPixmap(url));
      ansL->addWidget(anslabel[i]);
   }
@@ -449,28 +484,28 @@ void Window::setupBigGame()
     user1lbl[i] = new QLineEdit;
     user1voice[i] = new QLineEdit;
 
-    user0num[i]->setFont(m_gameSettings.fontNum);
+    user0num[i]->setFont(m_gameSettings.fontService);
     user0num[i]->setFixedSize(50,60);
     if (i != 5) 
       user0num[i]->setText(QString::number(i+1)+".");
     user0num[i]->setPalette(*pal3);
     user0num[i]->setReadOnly(TRUE);      
     
-    user0lbl[i]->setFont(m_gameSettings.font1);
+    user0lbl[i]->setFont(m_gameSettings.fontService);
     user0lbl[i]->setFixedSize(400,60);
-    user0voice[i]->setFont(m_gameSettings.font1);
+    user0voice[i]->setFont(m_gameSettings.fontService);
     user0voice[i]->setFixedSize(100,60);
 
-    user1num[i]->setFont(m_gameSettings.fontNum);
+    user1num[i]->setFont(m_gameSettings.fontService);
     user1num[i]->setFixedSize(50,60);
     if (i != 5) 
       user1num[i]->setText(QString::number(i+1)+".");
     user1num[i]->setPalette(*pal3);
     user1num[i]->setReadOnly(TRUE);  
     
-    user1lbl[i]->setFont(m_gameSettings.font1);
+    user1lbl[i]->setFont(m_gameSettings.fontService);
     user1lbl[i]->setFixedSize(400,60);
-    user1voice[i]->setFont(m_gameSettings.font1);
+    user1voice[i]->setFont(m_gameSettings.fontService);
     user1voice[i]->setFixedSize(100,60);
     user1lbl[i]->setAlignment(Qt::AlignRight);
   
@@ -580,13 +615,13 @@ void Window::openAnswer(int i)
 void Window::setActiveCommand(int i)
 {
   if (i) { activecommand = 1;
-  com1label->setFont(m_gameSettings.font2);  
-  com0label->setFont(m_gameSettings.font1);
+  com1label->setFont(m_gameSettings.fontTeamTitleBU);  
+  com0label->setFont(m_gameSettings.fontTeamTitle);
   curbadlabel = bad1label[0];
   }
   else { activecommand = 0; 
-  com0label->setFont(m_gameSettings.font2);  
-  com1label->setFont(m_gameSettings.font1);
+  com0label->setFont(m_gameSettings.fontTeamTitleBU);  
+  com1label->setFont(m_gameSettings.fontTeamTitle);
   curbadlabel = bad0label[0];
   }
 }
@@ -629,16 +664,16 @@ void Window::setupGame()
   sg_button = new QPushButton;
   
   sg_button->setText("OK");
-  sg_button->setFont(m_gameSettings.fontNum);
+  sg_button->setFont(m_gameSettings.fontService);
   sg_lbl1->setText("Команда 1");
-  sg_lbl1->setFont(m_gameSettings.fontNum);
+  sg_lbl1->setFont(m_gameSettings.fontService);
   sg_lbl2->setText("Команда 2");
-  sg_lbl2->setFont(m_gameSettings.fontNum);
+  sg_lbl2->setFont(m_gameSettings.fontService);
   sg_setuplbl->setText("Введите названия команд");
   sg_name1->setFixedSize(300,60);
-  sg_name1->setFont(m_gameSettings.font1);
+  sg_name1->setFont(m_gameSettings.fontTeamTitle);
   sg_name2->setFixedSize(300,60);
-  sg_name2->setFont(m_gameSettings.font1);
+  sg_name2->setFont(m_gameSettings.fontTeamTitle);
   
   sg_setup1v->addWidget(sg_lbl1);
   sg_setup1v->addWidget(sg_name1);
@@ -858,10 +893,10 @@ void Window::setupTimerWindow()
 {
   timerlbl = new QLabel;
   timerlbl->setText("Осталось");
-  timerlbl->setFont(m_gameSettings.font1);
+  timerlbl->setFont(m_gameSettings.fontService);
   
   seclabel = new QLabel;
-  seclabel->setFont(m_gameSettings.font1);
+  seclabel->setFont(m_gameSettings.fontService);
   seclabel->setAlignment(Qt::AlignCenter);
   
   timerVl = new QVBoxLayout;
@@ -952,8 +987,8 @@ void Window::newLevel(int i)
     clearBadAnswer();
     closeAnswers();  
     
-    com0label->setFont(m_gameSettings.font1);
-    com1label->setFont(m_gameSettings.font1);
+    com0label->setFont(m_gameSettings.fontTeamTitle);
+    com1label->setFont(m_gameSettings.fontTeamTitle);
   
     gamelabel0->setPixmap(QPixmap(str));
     gamelabel1->setPixmap(QPixmap(str));

@@ -20,7 +20,7 @@ class GeneralGameTab : public QWidget
 
 public:
   GeneralGameTab(GameSettings *psett);
-
+  
   Ui::Form generalGameUI;
 private:
 };
@@ -32,6 +32,17 @@ public:
 
   Ui::FormMain MainUI;
 private:
+  QFont *m_pQuestionFont, 
+    *m_pAnswerFont, 
+    *m_pServiceFont,
+    *m_pTeamTitleFont;
+  void GetFontDlg(QFont *pDstFont);
+
+public slots:
+  void FontQuestionClick();
+  void FontAnswerClick();
+  void FontServiceClick();
+  void FontTeamClick();
 };
 
 class QuestionTab : public QWidget
@@ -63,8 +74,8 @@ private:
   QuestionTab *m_pQuestionTab[MAX_ROUND];
   GameSettings m_gameSettings;
 
-  void accept();
 public slots:
+  void accept();
 };
 
 

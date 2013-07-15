@@ -4,6 +4,7 @@
 #include <QDialog>
 #include "settDlg.h"
 #include "window.h"
+#include <QFontDialog>
 
 SettingsDialog::SettingsDialog(QWidget *parent)
 : QDialog(parent)
@@ -33,7 +34,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
   setLayout(mainLayout);
 
   setWindowTitle(tr("Настройки"));
-  resize(450,270);
+  resize(450,320);
 
   tabWidget->setCurrentIndex(0);
 }
@@ -95,6 +96,40 @@ MainSettingsTab::MainSettingsTab(GameSettings *psett)
   MainUI.spinRoundSuperPlayer1Timer->setValue(psett->time1);
   MainUI.spinRoundSuperPlayer2Timer->setValue(psett->time2);
   MainUI.spinWinPoints->setValue(psett->winpoint);
+  m_pQuestionFont = &psett->fontQ;
+  m_pAnswerFont = &psett->fontAnswer;
+  m_pServiceFont = &psett->fontService;
+  m_pTeamTitleFont = &psett->fontTeamTitle;
+
+  connect(MainUI.FontQuestionBtn, SIGNAL(clicked()), this, SLOT(FontQuestionClick()));
+  connect(MainUI.FontAnswerBtn, SIGNAL(clicked()), this, SLOT(FontAnswerClick()));
+  connect(MainUI.FontServiceBtn, SIGNAL(clicked()), this, SLOT(FontServiceClick()));
+  connect(MainUI.FontTeamBtn, SIGNAL(clicked()),this, SLOT(FontTeamClick()));
+}
+
+void MainSettingsTab::GetFontDlg(QFont *pDstFont)
+{
+  bool ok;
+  QFont font = QFontDialog::getFont(
+    &ok, *pDstFont, this);
+  if (ok)
+    *pDstFont = font;
+}
+
+void MainSettingsTab::FontQuestionClick()
+{ GetFontDlg(m_pQuestionFont);
+}
+
+void MainSettingsTab::FontAnswerClick()
+{ GetFontDlg(m_pAnswerFont);
+}
+
+void MainSettingsTab::FontServiceClick()
+{ GetFontDlg(m_pServiceFont);
+}
+
+void MainSettingsTab::FontTeamClick()
+{ GetFontDlg(m_pTeamTitleFont);
 }
 
 QuestionTab::QuestionTab(Question *pQuestion)
