@@ -1,4 +1,6 @@
 
+.claude/
+
 *.idb
 Makefile*
 *.obj
