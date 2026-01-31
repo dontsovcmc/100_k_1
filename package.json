@@ -1,0 +1,26 @@
+{
+  "name": "100k1-game",
+  "version": "1.0.0",
+  "description": "Russian game show '100 к 1' web implementation",
+  "main": "js/app.js",
+  "scripts": {
+    "build": "esbuild js/app.js --bundle --outfile=dist/bundle.js --format=iife",
+    "build:watch": "esbuild js/app.js --bundle --outfile=dist/bundle.js --format=iife --watch",
+    "dev": "esbuild js/app.js --bundle --outfile=dist/bundle.js --format=iife --watch",
+    "prod": "esbuild js/app.js --bundle --outfile=dist/bundle.js --format=iife --minify --sourcemap"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dontsovcmc/100_k_1.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dontsovcmc/100_k_1/issues"
+  },
+  "homepage": "https://github.com/dontsovcmc/100_k_1#readme",
+  "devDependencies": {
+    "esbuild": "^0.27.2"
+  }
+}

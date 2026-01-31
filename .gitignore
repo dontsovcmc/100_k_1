@@ -36,3 +36,21 @@ obj/
 [Rr]elease*/
 _ReSharper*/
 [Tt]est[Rr]esult*
+
+# Node.js & npm
+node_modules/
+package-lock.json
+npm-debug.log
+yarn.lock
+
+# Build output
+dist/
+bundle.js
+dist/bundle.js
+dist/bundle.js.map
+
+# Development
+*.swp
+*.swo
+.vscode/
+.idea/

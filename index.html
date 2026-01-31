@@ -4,580 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>100 к 1</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            color: white;
-            height: 100vh;
-            overflow: hidden;
-            user-select: none;
-        }
-
-        #game-container {
-            display: flex;
-            flex-direction: column;
-            height: calc(100vh - 55px);
-            padding: 20px;
-        }
-
-        /* Вопрос */
-        #question-area {
-            text-align: center;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-
-        #question-text {
-            font-size: 36px;
-            font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-        }
-
-        /* Регулярные раунды */
-        #regular-game-layout {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        #super-game-layout {
-            flex: 1;
-            display: none;
-            flex-direction: column;
-        }
-
-        /* Верх: имена команд + текущие очки */
-        #top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-
-        .team-name {
-            font-size: 30px;
-            min-width: 250px;
-            text-align: center;
-        }
-
-        .team-name.active {
-            font-weight: bold;
-            text-decoration: underline;
-            color: #ffcc00;
-        }
-
-        /* LCD дисплей */
-        .lcd-display {
-            background: #000;
-            color: #0f0;
-            font-family: 'Courier New', monospace;
-            font-size: 48px;
-            padding: 10px 20px;
-            border: 2px solid #333;
-            text-align: center;
-            min-width: 150px;
-            box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.3);
-            border-radius: 5px;
-        }
-
-        /* Низ: команды + ответы */
-        #bottom-area {
-            display: flex;
-            justify-content: space-between;
-            gap: 20px;
-            flex: 1;
-        }
-
-        .team-column {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-            background: rgba(0, 0, 0, 0.2);
-            padding: 20px;
-            border-radius: 10px;
-            min-width: 200px;
-        }
-
-        .round-icon {
-            max-width: 150px;
-            max-height: 100px;
-        }
-
-        .bad-marks {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .x-mark {
-            width: 60px;
-            height: 60px;
-        }
-
-        /* Ответы */
-        #answers-column {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-            min-height: 0;
-        }
-
-        .answer-slot {
-            position: relative;
-            flex: 1;
-            min-height: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .answer-bg {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            border-radius: 5px;
-        }
-
-        .answer-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 24px;
-            color: white;
-            text-shadow: 2px 2px 4px black;
-            font-weight: bold;
-            white-space: nowrap;
-        }
-
-        .answer-text.revealed {
-            animation: revealAnswer 0.4s ease-out;
-        }
-
-        @keyframes revealAnswer {
-            0% {
-                opacity: 0;
-                transform: translate(-50%, -50%) scale(0.5);
-            }
-            100% {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(1);
-            }
-        }
-
-        /* Супер игра */
-        #super-game-grid {
-            display: flex;
-            gap: 40px;
-            justify-content: center;
-            flex: 1;
-            padding: 20px;
-        }
-
-        .player-column {
-            flex: 1;
-            max-width: 400px;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 20px;
-            border-radius: 10px;
-        }
-
-        .player-column h3 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .player-row {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
-            align-items: center;
-        }
-
-        .row-num {
-            font-size: 20px;
-            font-weight: bold;
-            min-width: 30px;
-        }
-
-        .answer-input {
-            flex: 1;
-            padding: 8px;
-            font-size: 16px;
-            border: none;
-            border-radius: 5px;
-        }
-
-        .points-input {
-            width: 80px;
-            padding: 8px;
-            font-size: 16px;
-            border: none;
-            border-radius: 5px;
-        }
-
-        .sum-row {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 2px solid rgba(255, 255, 255, 0.3);
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .sum-row span {
-            font-size: 20px;
-            font-weight: bold;
-            min-width: 80px;
-        }
-
-        .sum-display {
-            flex: 1;
-            padding: 10px;
-            font-size: 24px;
-            font-weight: bold;
-            text-align: center;
-            background: #000;
-            color: #0f0;
-            border: 2px solid #333;
-            border-radius: 5px;
-        }
-
-        #super-game-controls {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            padding: 20px;
-        }
-
-        #super-game-controls button {
-            padding: 15px 30px;
-            font-size: 18px;
-            font-weight: bold;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            transition: all 0.3s;
-        }
-
-        #super-game-controls button:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: scale(1.05);
-        }
-
-        /* Таймер */
-        #timer-widget {
-            position: fixed;
-            top: 50%;
-            right: 50px;
-            transform: translateY(-50%);
-            background: rgba(0, 0, 0, 0.8);
-            padding: 20px;
-            border-radius: 10px;
-            border: 2px solid #ffcc00;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .timer-icon {
-            width: 100px;
-            height: 100px;
-        }
-
-        #timer-seconds {
-            font-size: 36px;
-            font-weight: bold;
-            color: #ffcc00;
-        }
-
-        /* Help overlay */
-        #help-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.9);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-        }
-
-        #help-content {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 40px 50px;
-            border-radius: 20px;
-            max-width: 1100px;
-            max-height: 85vh;
-            overflow-y: auto;
-        }
-
-        #help-content h3 {
-            grid-column: 1 / -1;  /* Заголовки на всю ширину */
-            margin: 15px 0 10px 0;
-            font-size: 22px;
-            color: #ffcc00;
-            border-bottom: 1px solid rgba(255, 204, 0, 0.3);
-            padding-bottom: 5px;
-        }
-
-        #help-content .help-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;  /* 2 колонки */
-            gap: 12px 30px;
-            margin-bottom: 20px;
-        }
-
-        #help-content .help-item {
-            display: flex;
-            align-items: baseline;
-            font-size: 18px;
-            line-height: 1.6;
-        }
-
-        #help-content .help-key {
-            background: rgba(255, 255, 255, 0.15);
-            padding: 3px 10px;
-            border-radius: 4px;
-            margin-right: 10px;
-            font-family: monospace;
-            font-weight: bold;
-            min-width: 60px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.25);
-        }
-
-        #help-content .help-desc {
-            flex: 1;
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        #help-content .help-status {
-            grid-column: 1 / -1;  /* Статус на всю ширину */
-            margin-top: 10px;
-            padding-top: 15px;
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
-            font-size: 17px;
-            line-height: 1.7;
-        }
-
-        /* Settings modal */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.9);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            overflow-y: auto;
-        }
-
-        .modal-content {
-            background: rgba(30, 60, 114, 0.95);
-            padding: 40px;
-            border-radius: 20px;
-            max-width: 900px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .tab-btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            font-size: 14px;
-            transition: all 0.3s;
-        }
-
-        .tab-btn.active {
-            background: rgba(255, 255, 255, 0.4);
-            font-weight: bold;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .tab-content label {
-            display: block;
-            margin: 15px 0;
-            font-size: 16px;
-        }
-
-        .tab-content input[type="text"],
-        .tab-content input[type="number"] {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border: none;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-
-        .tab-content input[type="checkbox"] {
-            margin-right: 10px;
-        }
-
-        .answers-grid {
-            display: grid;
-            gap: 10px;
-        }
-
-        .answer-editor-row {
-            display: grid;
-            grid-template-columns: 1fr 100px;
-            gap: 10px;
-        }
-
-        .modal-buttons {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            margin-top: 30px;
-        }
-
-        .modal-buttons button {
-            padding: 15px 40px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            transition: all 0.3s;
-        }
-
-        #settings-save {
-            background: #51cf66;
-            color: white;
-        }
-
-        #settings-cancel {
-            background: #ff6b6b;
-            color: white;
-        }
-
-        /* Панель управления для организатора */
-        #control-panel {
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            z-index: 10000;
-            opacity: 0.3;
-            transition: opacity 0.3s;
-        }
-
-        #control-panel:hover {
-            opacity: 1;
-        }
-
-        .control-btn {
-            width: 32px;
-            height: 32px;
-            background: rgba(0, 0, 0, 0.7);
-            border: 1px solid #666;
-            border-radius: 4px;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.2s;
-        }
-
-        .control-btn:hover {
-            background: rgba(0, 0, 0, 0.9);
-            border-color: #ffcc00;
-        }
-
-        .control-btn:active {
-            background: #ffcc00;
-            color: black;
-        }
-
-        /* Контекстные подсказки внизу */
-        #hints-panel {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 55px;
-            background: rgba(0, 0, 0, 0.85);
-            color: rgba(255, 255, 255, 0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 500;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            font-size: 12px;
-        }
-
-        #hints-content {
-            text-align: center;
-            padding: 0 20px;
-        }
-
-        #hints-content kbd {
-            background: rgba(255, 255, 255, 0.15);
-            padding: 3px 8px;
-            border-radius: 3px;
-            margin: 0 2px;
-            font-family: monospace;
-            font-size: 11px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <!-- Основной контейнер -->
     <div id="game-container">
         <!-- Вопрос -->
         <div id="question-area">
-            <div id="question-text">Загрузите настройки или нажмите F2</div>
+            <div id="question-text">Игра 100 к 1</div>
         </div>
 
         <!-- Регулярные раунды -->
@@ -596,37 +30,43 @@
                     <img id="team0-round-icon" class="round-icon" src="bmp/game_1.bmp" alt="Round">
                     <div id="team0-score-lcd" class="lcd-display">0</div>
                     <div id="team0-bad-marks" class="bad-marks">
-                        <img class="x-mark" src="bmp/_x_0.bmp" alt="X">
-                        <img class="x-mark" src="bmp/_x_0.bmp" alt="X">
-                        <img class="x-mark" src="bmp/_x_0.bmp" alt="X">
+                        <img class="x-mark" src="bmp/_x_0.bmp" alt="X" id="x1-1">
+                        <img class="x-mark" src="bmp/_x_0.bmp" alt="X" id="x1-2">
+                        <img class="x-mark" src="bmp/_x_0.bmp" alt="X" id="x1-3">
                     </div>
                 </div>
 
                 <!-- Ответы (6 слотов) -->
                 <div id="answers-column">
-                    <div class="answer-slot" data-index="0">
+                    <div class="answer-slot" data-index="0" id="answer1">
                         <img src="bmp/answ_1.bmp" class="answer-bg" alt="Answer 1">
                         <div class="answer-text"></div>
+                        <div class="answer-points"></div>
                     </div>
-                    <div class="answer-slot" data-index="1">
+                    <div class="answer-slot" data-index="1" id="answer2">
                         <img src="bmp/answ_2.bmp" class="answer-bg" alt="Answer 2">
                         <div class="answer-text"></div>
+                        <div class="answer-points"></div>
                     </div>
-                    <div class="answer-slot" data-index="2">
+                    <div class="answer-slot" data-index="2" id="answer3">
                         <img src="bmp/answ_3.bmp" class="answer-bg" alt="Answer 3">
                         <div class="answer-text"></div>
+                        <div class="answer-points"></div>
                     </div>
-                    <div class="answer-slot" data-index="3">
+                    <div class="answer-slot" data-index="3" id="answer4">
                         <img src="bmp/answ_4.bmp" class="answer-bg" alt="Answer 4">
                         <div class="answer-text"></div>
+                        <div class="answer-points"></div>
                     </div>
-                    <div class="answer-slot" data-index="4">
+                    <div class="answer-slot" data-index="4" id="answer5">
                         <img src="bmp/answ_5.bmp" class="answer-bg" alt="Answer 5">
                         <div class="answer-text"></div>
+                        <div class="answer-points"></div>
                     </div>
-                    <div class="answer-slot" data-index="5">
+                    <div class="answer-slot" data-index="5" id="answer6">
                         <img src="bmp/answ_6.bmp" class="answer-bg" alt="Answer 6">
                         <div class="answer-text"></div>
+                        <div class="answer-points"></div>
                     </div>
                     <div class="answer-slot" data-index="6">
                         <div class="answer-bg" style="width: 100%; height: 100%; background: transparent; border-radius: 5px;"></div>
@@ -639,90 +79,72 @@
                     <img id="team1-round-icon" class="round-icon" src="bmp/game_1.bmp" alt="Round">
                     <div id="team1-score-lcd" class="lcd-display">0</div>
                     <div id="team1-bad-marks" class="bad-marks">
-                        <img class="x-mark" src="bmp/_x_0.bmp" alt="X">
-                        <img class="x-mark" src="bmp/_x_0.bmp" alt="X">
-                        <img class="x-mark" src="bmp/_x_0.bmp" alt="X">
+                        <img class="x-mark" src="bmp/_x_0.bmp" alt="X" id="x2-1">
+                        <img class="x-mark" src="bmp/_x_0.bmp" alt="X" id="x2-2">
+                        <img class="x-mark" src="bmp/_x_0.bmp" alt="X" id="x2-3">
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Супер игра -->
-        <div id="super-game-layout">
-            <div id="super-game-grid">
+            <!-- Супер игра -->
+            <div id="super-game-grid" style="display: none;">
                 <!-- Игрок 1 -->
                 <div class="player-column" id="player1-column">
-                    <h3>Игрок 1</h3>
-                    <div class="player-row" data-row="0">
-                        <span class="row-num">1.</span>
-                        <input type="text" class="answer-input p1-answer" placeholder="Ответ">
-                        <input type="number" class="points-input p1-points" placeholder="0">
+                    <div class="player-row" data-row="0" id="sg-row1-1">
+                        <div class="row-num">1.</div>
+                        <input type="text" class="answer-input p1-answer" id="p1-q1-answer" placeholder="Ответ">
+                        <input type="number" class="points-input p1-points" id="p1-q1-points" placeholder="0">
                     </div>
-                    <div class="player-row" data-row="1">
-                        <span class="row-num">2.</span>
-                        <input type="text" class="answer-input p1-answer" placeholder="Ответ">
-                        <input type="number" class="points-input p1-points" placeholder="0">
+                    <div class="player-row" data-row="1" id="sg-row1-2">
+                        <div class="row-num">2.</div>
+                        <input type="text" class="answer-input p1-answer" id="p1-q2-answer" placeholder="Ответ">
+                        <input type="number" class="points-input p1-points" id="p1-q2-points" placeholder="0">
                     </div>
-                    <div class="player-row" data-row="2">
-                        <span class="row-num">3.</span>
-                        <input type="text" class="answer-input p1-answer" placeholder="Ответ">
-                        <input type="number" class="points-input p1-points" placeholder="0">
+                    <div class="player-row" data-row="2" id="sg-row1-3">
+                        <div class="row-num">3.</div>
+                        <input type="text" class="answer-input p1-answer" id="p1-q3-answer" placeholder="Ответ">
+                        <input type="number" class="points-input p1-points" id="p1-q3-points" placeholder="0">
                     </div>
-                    <div class="player-row" data-row="3">
-                        <span class="row-num">4.</span>
-                        <input type="text" class="answer-input p1-answer" placeholder="Ответ">
-                        <input type="number" class="points-input p1-points" placeholder="0">
+                    <div class="player-row" data-row="3" id="sg-row1-4">
+                        <div class="row-num">4.</div>
+                        <input type="text" class="answer-input p1-answer" id="p1-q4-answer" placeholder="Ответ">
+                        <input type="number" class="points-input p1-points" id="p1-q4-points" placeholder="0">
                     </div>
-                    <div class="player-row" data-row="4">
-                        <span class="row-num">5.</span>
-                        <input type="text" class="answer-input p1-answer" placeholder="Ответ">
-                        <input type="number" class="points-input p1-points" placeholder="0">
-                    </div>
-                    <div class="sum-row">
-                        <span>Сумма:</span>
-                        <input type="number" class="sum-display" id="p1-sum" readonly value="0">
+                    <div class="player-row" data-row="4" id="sg-row1-5">
+                        <div class="row-num">5.</div>
+                        <input type="text" class="answer-input p1-answer" id="p1-q5-answer" placeholder="Ответ">
+                        <input type="number" class="points-input p1-points" id="p1-q5-points" placeholder="0">
                     </div>
                 </div>
 
                 <!-- Игрок 2 -->
                 <div class="player-column" id="player2-column">
-                    <h3>Игрок 2</h3>
-                    <div class="player-row" data-row="0">
-                        <span class="row-num">1.</span>
-                        <input type="text" class="answer-input p2-answer" placeholder="Ответ">
-                        <input type="number" class="points-input p2-points" placeholder="0">
+                    <div class="player-row" data-row="0" id="sg-row2-1">
+                        <div class="row-num">1.</div>
+                        <input type="text" class="answer-input p2-answer" id="p2-q1-answer" placeholder="Ответ">
+                        <input type="number" class="points-input p2-points" id="p2-q1-points" placeholder="0">
                     </div>
-                    <div class="player-row" data-row="1">
-                        <span class="row-num">2.</span>
-                        <input type="text" class="answer-input p2-answer" placeholder="Ответ">
-                        <input type="number" class="points-input p2-points" placeholder="0">
+                    <div class="player-row" data-row="1" id="sg-row2-2">
+                        <div class="row-num">2.</div>
+                        <input type="text" class="answer-input p2-answer" id="p2-q2-answer" placeholder="Ответ">
+                        <input type="number" class="points-input p2-points" id="p2-q2-points" placeholder="0">
                     </div>
-                    <div class="player-row" data-row="2">
-                        <span class="row-num">3.</span>
-                        <input type="text" class="answer-input p2-answer" placeholder="Ответ">
-                        <input type="number" class="points-input p2-points" placeholder="0">
+                    <div class="player-row" data-row="2" id="sg-row2-3">
+                        <div class="row-num">3.</div>
+                        <input type="text" class="answer-input p2-answer" id="p2-q3-answer" placeholder="Ответ">
+                        <input type="number" class="points-input p2-points" id="p2-q3-points" placeholder="0">
                     </div>
-                    <div class="player-row" data-row="3">
-                        <span class="row-num">4.</span>
-                        <input type="text" class="answer-input p2-answer" placeholder="Ответ">
-                        <input type="number" class="points-input p2-points" placeholder="0">
+                    <div class="player-row" data-row="3" id="sg-row2-4">
+                        <div class="row-num">4.</div>
+                        <input type="text" class="answer-input p2-answer" id="p2-q4-answer" placeholder="Ответ">
+                        <input type="number" class="points-input p2-points" id="p2-q4-points" placeholder="0">
                     </div>
-                    <div class="player-row" data-row="4">
-                        <span class="row-num">5.</span>
-                        <input type="text" class="answer-input p2-answer" placeholder="Ответ">
-                        <input type="number" class="points-input p2-points" placeholder="0">
-                    </div>
-                    <div class="sum-row">
-                        <span>Итого:</span>
-                        <input type="number" class="sum-display" id="p2-total" readonly value="0">
+                    <div class="player-row" data-row="4" id="sg-row2-5">
+                        <div class="row-num">5.</div>
+                        <input type="text" class="answer-input p2-answer" id="p2-q5-answer" placeholder="Ответ">
+                        <input type="number" class="points-input p2-points" id="p2-q5-points" placeholder="0">
                     </div>
                 </div>
-            </div>
-
-            <div id="super-game-controls">
-                <button id="hide-player1">Скрыть ответы Игрока 1</button>
-                <button id="start-timer-btn">Таймер</button>
-                <button id="calc-sum-btn">Подсчёт</button>
             </div>
         </div>
     </div>
@@ -745,14 +167,18 @@
 
             <div class="tabs">
                 <button class="tab-btn active" data-tab="general">Игра</button>
-                <button class="tab-btn" data-tab="main">Настройки</button>
-                <button class="tab-btn" data-tab="q0">Простая игра</button>
-                <button class="tab-btn" data-tab="q1">Двойная игра</button>
-                <button class="tab-btn" data-tab="q2">Тройная игра</button>
-                <button class="tab-btn" data-tab="q3">Игра наоборот</button>
+                <button class="tab-btn" data-tab="q0" data-round="ROUND_1">Простая игра</button>
+                <button class="tab-btn" data-tab="q1" data-round="ROUND_2">Двойная игра</button>
+                <button class="tab-btn" data-tab="q2" data-round="ROUND_3">Тройная игра</button>
+                <button class="tab-btn" data-tab="q3" data-round="ROUND_OBR">Игра наоборот</button>
+                <button class="tab-btn" data-tab="qsuper" data-round="ROUND_SUPER">Большая игра</button>
             </div>
 
             <div id="tab-general" class="tab-content active">
+                <label>
+                    Тема игры:
+                    <input type="text" id="cfg-game-theme" placeholder="100 к 1">
+                </label>
                 <label>
                     Команда 1:
                     <input type="text" id="cfg-team0" placeholder="Команда 1">
@@ -762,47 +188,24 @@
                     <input type="text" id="cfg-team1" placeholder="Команда 2">
                 </label>
                 <label>
-                    <input type="checkbox" id="cfg-round1" checked>
-                    Простая игра (×1)
+                    Баллы команды 1:
+                    <input type="number" id="cfg-point0" placeholder="0" min="0">
                 </label>
                 <label>
-                    <input type="checkbox" id="cfg-round2" checked>
-                    Двойная игра (×2)
+                    Баллы команды 2:
+                    <input type="number" id="cfg-point1" placeholder="0" min="0">
                 </label>
                 <label>
-                    <input type="checkbox" id="cfg-round3" checked>
-                    Тройная игра (×3)
-                </label>
-                <label>
-                    <input type="checkbox" id="cfg-roundobr" checked>
-                    Обратная игра
-                </label>
-                <label>
-                    <input type="checkbox" id="cfg-roundsuper" checked>
-                    Большая игра
-                </label>
-            </div>
-
-            <div id="tab-main" class="tab-content">
-                <label>
-                    Таймер Обратной игры (сек):
-                    <input type="number" id="cfg-time3" value="60">
-                </label>
-                <label>
-                    Таймер Игрок 1 (сек):
-                    <input type="number" id="cfg-time1" value="15">
-                </label>
-                <label>
-                    Таймер Игрок 2 (сек):
-                    <input type="number" id="cfg-time2" value="20">
-                </label>
-                <label>
-                    Победные очки:
-                    <input type="number" id="cfg-winpoint" value="80">
+                    Текущие очки (в раунде):
+                    <input type="number" id="cfg-current-points" placeholder="0" min="0">
                 </label>
             </div>
 
             <div id="tab-q0" class="tab-content">
+                <label class="round-toggle">
+                    <input type="checkbox" id="cfg-round1" checked>
+                    Включить раунд
+                </label>
                 <label>
                     Вопрос:
                     <input type="text" id="q0-text" placeholder="Вопрос для раунда 1">
@@ -836,6 +239,10 @@
             </div>
 
             <div id="tab-q1" class="tab-content">
+                <label class="round-toggle">
+                    <input type="checkbox" id="cfg-round2" checked>
+                    Включить раунд
+                </label>
                 <label>
                     Вопрос:
                     <input type="text" id="q1-text" placeholder="Вопрос для раунда 2">
@@ -869,6 +276,10 @@
             </div>
 
             <div id="tab-q2" class="tab-content">
+                <label class="round-toggle">
+                    <input type="checkbox" id="cfg-round3" checked>
+                    Включить раунд
+                </label>
                 <label>
                     Вопрос:
                     <input type="text" id="q2-text" placeholder="Вопрос для раунда 3">
@@ -902,6 +313,14 @@
             </div>
 
             <div id="tab-q3" class="tab-content">
+                <label class="round-toggle">
+                    <input type="checkbox" id="cfg-roundobr" checked>
+                    Включить раунд
+                </label>
+                <label>
+                    Таймер (сек):
+                    <input type="number" id="cfg-time3" value="60">
+                </label>
                 <label>
                     Вопрос:
                     <input type="text" id="q3-text" placeholder="Вопрос для обратной игры">
@@ -934,10 +353,39 @@
                 </div>
             </div>
 
+            <div id="tab-qsuper" class="tab-content">
+                <label class="round-toggle">
+                    <input type="checkbox" id="cfg-roundsuper" checked>
+                    Включить раунд
+                </label>
+                <label>
+                    Первый игрок, сек:
+                    <input type="number" id="cfg-time1" value="15">
+                </label>
+                <label>
+                    Второй игрок, сек:
+                    <input type="number" id="cfg-time2" value="20">
+                </label>
+                <label>
+                    Очки для победы:
+                    <input type="number" id="cfg-winpoint-super" value="200">
+                </label>
+            </div>
+
             <div class="modal-buttons">
                 <button id="settings-save">OK</button>
                 <button id="settings-cancel">Отмена</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Win Modal -->
+    <div id="win-modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center;">
+        <div style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); padding: 40px; border-radius: 15px; border: 3px solid #ffd700; box-shadow: 0 0 30px rgba(255,215,0,0.5); text-align: center; min-width: 400px;">
+            <div style="font-size: 48px; margin-bottom: 20px;">🏆</div>
+            <h2 style="color: #ffd700; font-size: 36px; margin: 0 0 20px 0;">ПОБЕДА!</h2>
+            <p id="win-message" style="color: white; font-size: 24px; margin: 0 0 30px 0;">Набрано 0 очков!</p>
+            <button id="win-modal-ok" style="background: #ffd700; color: #1e3c72; border: none; padding: 15px 40px; font-size: 20px; font-weight: bold; border-radius: 10px; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.3);">OK</button>
         </div>
     </div>
 
@@ -951,927 +399,7 @@
     <audio id="sound-level" src="sounds/level.wav" preload="auto"></audio>
     <audio id="sound-win" src="sounds/win.wav" preload="auto"></audio>
 
-    <script>
-        // === GAME STATE ===
-        const GameState = {
-            config: {
-                command0name: "Команда 1",
-                command1name: "Команда 2",
-                time1: 15,
-                time2: 20,
-                timeRoundObr: 60,
-                winpoint: 80,
-                rounds: {
-                    ROUND_1: true,
-                    ROUND_2: true,
-                    ROUND_3: true,
-                    ROUND_OBR: true,
-                    ROUND_SUPER: true
-                }
-            },
-
-            questions: [
-                {
-                    name: "Что люди делают в первый день лета?",
-                    answers: [
-                        {text: "Идут на пляж", num: 40},
-                        {text: "Выезжают на дачу", num: 30},
-                        {text: "Гуляют в парке", num: 20},
-                        {text: "Купаются в реке", num: 15},
-                        {text: "Едят мороженое", num: 10},
-                        {text: "Загорают", num: 5}
-                    ]
-                },
-                {
-                    name: "Что люди забывают дома?",
-                    answers: [
-                        {text: "Ключи", num: 40},
-                        {text: "Телефон", num: 30},
-                        {text: "Кошелек", num: 20},
-                        {text: "Зонт", num: 15},
-                        {text: "Очки", num: 10},
-                        {text: "Документы", num: 5}
-                    ]
-                },
-                {
-                    name: "Самая популярная профессия?",
-                    answers: [
-                        {text: "Учитель", num: 40},
-                        {text: "Врач", num: 30},
-                        {text: "Программист", num: 20},
-                        {text: "Продавец", num: 15},
-                        {text: "Водитель", num: 10},
-                        {text: "Бухгалтер", num: 5}
-                    ]
-                },
-                {
-                    name: "Что делают на выходных?",
-                    answers: [
-                        {text: "Отдыхают дома", num: 40},
-                        {text: "Гуляют", num: 30},
-                        {text: "Смотрят фильмы", num: 20},
-                        {text: "Встречаются с друзьями", num: 15},
-                        {text: "Убираются", num: 10},
-                        {text: "Спят", num: 5}
-                    ]
-                }
-            ],
-
-            level: -1,
-            activecommand: 0,
-            points: 0,
-            point0: 0,
-            point1: 0,
-            badAnswer: [0, 0],
-            openanswer: 0,
-
-            zhreby: false,
-            game1: false,
-            game2: false,
-            obrat: false,
-            supergame: false,
-            winner: false,
-
-            superGameData: {
-                player1Answers: ["", "", "", "", ""],
-                player1Points: [0, 0, 0, 0, 0],
-                player2Answers: ["", "", "", "", ""],
-                player2Points: [0, 0, 0, 0, 0],
-                player1Sum: 0,
-                player2Sum: 0,
-                player1Visible: true
-            },
-
-            timer: {
-                active: false,
-                remaining: 0,
-                intervalId: null
-            },
-
-            helpVisible: false
-        };
-
-        // === INITIALIZATION ===
-        function init() {
-            loadState();
-            setupEventListeners();
-            applySettings();
-
-            if (GameState.level === -1) {
-                const firstLevel = getNextLevel();
-                if (firstLevel !== null) {
-                    newLevel(firstLevel);
-                }
-            }
-
-            playSound('start');
-            updateContextualHints();
-        }
-
-        function setupEventListeners() {
-            // Клавиатура
-            document.addEventListener('keydown', handleKeyPress);
-
-            // Settings tabs
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const tab = btn.dataset.tab;
-                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                    btn.classList.add('active');
-                    document.getElementById(`tab-${tab}`).classList.add('active');
-                });
-            });
-
-            // Settings buttons
-            document.getElementById('settings-save').addEventListener('click', saveSettings);
-            document.getElementById('settings-cancel').addEventListener('click', () => {
-                document.getElementById('settings-modal').style.display = 'none';
-            });
-
-            // File input handler (used by control panel import button)
-            document.getElementById('json-file-input').addEventListener('change', (e) => {
-                if (e.target.files[0]) {
-                    importFromJSON(e.target.files[0]);
-                }
-            });
-
-            // Super game controls
-            document.getElementById('hide-player1').addEventListener('click', togglePlayer1Answers);
-            document.getElementById('start-timer-btn').addEventListener('click', startSuperGameTimer);
-            document.getElementById('calc-sum-btn').addEventListener('click', calculateSuperGameSum);
-
-            // Super game inputs - auto calculate on change
-            document.querySelectorAll('.p1-points, .p2-points').forEach(input => {
-                input.addEventListener('input', calculateSuperGameSum);
-            });
-
-            // Control panel buttons
-            document.getElementById('btn-fullscreen').addEventListener('click', toggleFullscreen);
-            document.getElementById('btn-help').addEventListener('click', () => {
-                if (GameState.helpVisible) {
-                    document.getElementById('help-overlay').style.display = 'none';
-                    GameState.helpVisible = false;
-                } else {
-                    toggleHelp();
-                }
-            });
-            document.getElementById('btn-settings').addEventListener('click', openSettingsDialog);
-            document.getElementById('btn-import').addEventListener('click', () => {
-                document.getElementById('json-file-input').click();
-            });
-            document.getElementById('btn-export').addEventListener('click', exportToJSON);
-        }
-
-        // === KEYBOARD CONTROLS ===
-        function handleKeyPress(e) {
-            const key = e.key.toUpperCase();
-
-            // Проверка: если открыт settings modal или help overlay, игнорировать игровые клавиши
-            const settingsModal = document.getElementById('settings-modal');
-            const helpOverlay = document.getElementById('help-overlay');
-
-            // ESC для закрытия диалогов
-            if (e.key === 'Escape') {
-                if (settingsModal.style.display === 'flex') {
-                    settingsModal.style.display = 'none';
-                    return;
-                }
-                if (helpOverlay.style.display === 'flex') {
-                    helpOverlay.style.display = 'none';
-                    GameState.helpVisible = false;
-                    return;
-                }
-            }
-
-            // Если открыт settings modal, игнорировать все клавиши кроме ESC
-            if (settingsModal.style.display === 'flex') {
-                return;
-            }
-
-            // Если открыт help overlay, разрешить только F1 и ESC
-            if (helpOverlay.style.display === 'flex' && e.key !== 'F1') {
-                return;
-            }
-
-            // F1: Help
-            if (e.key === 'F1') {
-                e.preventDefault();
-                toggleHelp();
-                return;
-            }
-
-            // F2: Settings
-            if (e.key === 'F2') {
-                e.preventDefault();
-                openSettingsDialog();
-                return;
-            }
-
-            // F11: Fullscreen
-            if (e.key === 'F11') {
-                e.preventDefault();
-                toggleFullscreen();
-                return;
-            }
-
-            // 1-6: Open answers
-            if (key >= '1' && key <= '6') {
-                const index = parseInt(key) - 1;
-                if (GameState.level === 4) {
-                    toggleSuperGameRow(index);
-                } else {
-                    openAnswer(index);
-                }
-                return;
-            }
-
-            // X/DEL: Bad answer
-            if ((key === 'DELETE' || key === 'X') && !GameState.zhreby && GameState.level !== 4) {
-                badAnswer();
-                return;
-            }
-
-            // Q key
-            if (key === 'Q') {
-                if (GameState.obrat) {
-                    setActiveCommand(0);
-                    addPoints(0);
-                    checkWin();
-                } else if (GameState.level === 4) {
-                    startSuperGameTimer();
-                }
-                return;
-            }
-
-            // W key
-            if (key === 'W' && GameState.obrat) {
-                setActiveCommand(1);
-                addPoints(1);
-                checkWin();
-                return;
-            }
-
-            // A key
-            if (key === 'A' && GameState.level === 4) {
-                togglePlayer1Answers();
-                return;
-            }
-
-            // UP/N: Advance
-            if (e.key === 'ArrowUp' || key === 'N') {
-                handleAdvance();
-                return;
-            }
-
-            // LEFT/RIGHT: Switch team
-            if (e.key === 'ArrowLeft' && GameState.game1) {
-                setActiveCommand(0);
-                return;
-            }
-
-            if (e.key === 'ArrowRight' && GameState.game1) {
-                setActiveCommand(1);
-                return;
-            }
-
-            // C: Add points
-            if (key === 'C') {
-                addPoints(GameState.activecommand);
-                return;
-            }
-
-            // SPACE: Clear answers
-            if (e.key === ' ') {
-                // Разрешить пробел в input и textarea полях
-                const activeElement = document.activeElement;
-                if (activeElement.tagName === 'INPUT' ||
-                    activeElement.tagName === 'TEXTAREA' ||
-                    activeElement.isContentEditable) {
-                    return; // Не блокировать пробел в полях ввода
-                }
-
-                e.preventDefault();
-                clearAnswers();
-                return;
-            }
-
-            // Z: Clear bad answers
-            if (key === 'Z') {
-                clearBadAnswers();
-                return;
-            }
-
-            // T: Timer
-            if (key === 'T') {
-                startTimer(GameState.config.timeRoundObr);
-                return;
-            }
-
-            // V: Toggle team
-            if (key === 'V' && GameState.game1) {
-                setActiveCommand(GameState.activecommand === 0 ? 1 : 0);
-                return;
-            }
-        }
-
-        // === GAME MECHANICS ===
-        function newLevel(levelIndex) {
-            // Reset flags
-            GameState.zhreby = false;
-            GameState.game1 = false;
-            GameState.game2 = false;
-            GameState.obrat = false;
-            GameState.supergame = false;
-            GameState.winner = false;
-
-            GameState.level = levelIndex;
-            GameState.openanswer = 0;
-            GameState.points = 0;
-            GameState.badAnswer = [0, 0];
-            GameState.activecommand = 0;
-
-            playSound('level');
-
-            switch(levelIndex) {
-                case 0: case 1: case 2: // ROUND_1/2/3
-                    GameState.zhreby = true;
-                    showRegularLayout();
-                    updateQuestionText(getRoundTitle(levelIndex));
-                    clearAnswers();
-                    clearBadAnswers();
-                    updateRoundIcons(levelIndex);
-                    break;
-
-                case 3: // ROUND_OBR
-                    GameState.zhreby = true;
-                    showRegularLayout();
-                    updateQuestionText("Обратная игра");
-                    clearAnswers();
-                    clearBadAnswers();
-                    updateRoundIcons(levelIndex);
-                    break;
-
-                case 4: // ROUND_SUPER
-                    GameState.supergame = true;
-                    showSuperGameLayout();
-                    const winningTeam = GameState.point0 >= GameState.point1
-                        ? GameState.config.command0name
-                        : GameState.config.command1name;
-                    updateQuestionText(`Большая игра\nс командой ${winningTeam}`);
-                    break;
-            }
-
-            updateScoreDisplays();
-            saveState();
-            updateContextualHints();
-        }
-
-        function getRoundTitle(level) {
-            const titles = ["Простая игра", "Двойная игра", "Тройная игра", "Обратная игра"];
-            return titles[level];
-        }
-
-        function showRegularLayout() {
-            document.getElementById('regular-game-layout').style.display = 'flex';
-            document.getElementById('super-game-layout').style.display = 'none';
-        }
-
-        function showSuperGameLayout() {
-            document.getElementById('regular-game-layout').style.display = 'none';
-            document.getElementById('super-game-layout').style.display = 'flex';
-        }
-
-        function openAnswer(answerIndex) {
-            const currentQ = GameState.questions[GameState.level];
-            if (!currentQ) return;
-
-            const answerSlot = document.querySelector(`.answer-slot[data-index="${answerIndex}"]`);
-            if (!answerSlot) return;
-
-            const answerText = answerSlot.querySelector('.answer-text');
-            if (answerText.textContent.length > 0) return; // Already opened
-
-            playSound('open');
-
-            const answer = currentQ.answers[answerIndex];
-            answerText.textContent = `${answer.text} ${answer.num}`;
-            answerText.classList.add('revealed');
-
-            GameState.openanswer++;
-
-            // Calculate points
-            if (GameState.level >= 0 && GameState.level <= 2) {
-                GameState.points += answer.num * (GameState.level + 1);
-            } else if (GameState.level === 3) {
-                GameState.points = answer.num;
-            }
-
-            updateCurrentPointsDisplay();
-            saveState();
-        }
-
-        function badAnswer() {
-            playSound('bad');
-
-            const teamIndex = GameState.activecommand;
-            const badMarks = document.querySelectorAll(`#team${teamIndex}-bad-marks .x-mark`);
-            badMarks[GameState.badAnswer[teamIndex]].src = "bmp/_x_1.bmp";
-
-            GameState.badAnswer[teamIndex]++;
-
-            if (GameState.badAnswer[teamIndex] === 3) {
-                setActiveCommand(GameState.activecommand === 0 ? 1 : 0);
-                GameState.game1 = false;
-                GameState.game2 = true;
-            }
-
-            saveState();
-        }
-
-        function clearBadAnswers() {
-            document.querySelectorAll('.x-mark').forEach(mark => {
-                mark.src = "bmp/_x_0.bmp";
-            });
-            GameState.badAnswer = [0, 0];
-            saveState();
-        }
-
-        function addPoints(teamIndex) {
-            if (teamIndex === 0) {
-                GameState.point0 += GameState.points;
-            } else {
-                GameState.point1 += GameState.points;
-            }
-
-            GameState.points = 0;
-            GameState.winner = true;
-            GameState.game1 = false;
-            GameState.game2 = false;
-
-            if (GameState.obrat) {
-                GameState.winner = false;
-            }
-
-            updateScoreDisplays();
-            saveState();
-        }
-
-        function setActiveCommand(teamIndex) {
-            GameState.activecommand = teamIndex;
-
-            const team0Name = document.getElementById('team0-name');
-            const team1Name = document.getElementById('team1-name');
-
-            if (teamIndex === 0) {
-                team0Name.classList.add('active');
-                team1Name.classList.remove('active');
-            } else {
-                team1Name.classList.add('active');
-                team0Name.classList.remove('active');
-            }
-
-            saveState();
-            updateContextualHints();
-        }
-
-        function handleAdvance() {
-            switch (GameState.level) {
-                case 0: case 1: case 2: // ROUND_1/2/3
-                    if (GameState.zhreby) {
-                        const currentQ = GameState.questions[GameState.level];
-                        document.getElementById('question-text').textContent = currentQ.name;
-
-                        if (GameState.openanswer > 0) {
-                            GameState.zhreby = false;
-                            GameState.game1 = true;
-                            updateContextualHints();
-                        }
-                    } else if (GameState.game1 && GameState.openanswer < 6) {
-                        // Waiting for answers
-                        return;
-                    } else if (GameState.game1 && GameState.openanswer === 6) {
-                        addPoints(GameState.activecommand);
-                    } else if (GameState.game2 && !GameState.winner) {
-                        if (GameState.badAnswer[GameState.activecommand] > 0) {
-                            addPoints(GameState.activecommand === 0 ? 1 : 0);
-                        } else {
-                            addPoints(GameState.activecommand);
-                        }
-                    } else if (GameState.winner) {
-                        const nextLevel = getNextLevel();
-                        if (nextLevel !== null) {
-                            newLevel(nextLevel);
-                        } else {
-                            checkWin();
-                        }
-                    }
-                    break;
-
-                case 3: // ROUND_OBR
-                    if (GameState.zhreby) {
-                        const currentQ = GameState.questions[GameState.level];
-                        document.getElementById('question-text').textContent = currentQ.name;
-                        startTimer(GameState.config.timeRoundObr);
-
-                        if (GameState.openanswer === 0) {
-                            GameState.zhreby = false;
-                            GameState.obrat = true;
-                            updateContextualHints();
-                        }
-                    } else if (GameState.openanswer === 6) {
-                        const nextLevel = getNextLevel();
-                        if (nextLevel !== null) {
-                            newLevel(nextLevel);
-                        } else {
-                            checkWin();
-                        }
-                    }
-                    break;
-
-                case 4: // ROUND_SUPER
-                    checkWin();
-                    break;
-            }
-        }
-
-        function getNextLevel() {
-            const rounds = ['ROUND_1', 'ROUND_2', 'ROUND_3', 'ROUND_OBR', 'ROUND_SUPER'];
-            const currentIndex = GameState.level;
-
-            for (let i = currentIndex + 1; i < 5; i++) {
-                if (GameState.config.rounds[rounds[i]]) {
-                    return i;
-                }
-            }
-
-            return null;
-        }
-
-        function checkWin() {
-            let score = 0;
-
-            if (GameState.level >= 0 && GameState.level <= 3) {
-                score = GameState.activecommand === 0 ? GameState.point0 : GameState.point1;
-            } else if (GameState.level === 4) {
-                score = GameState.superGameData.player2Sum;
-            }
-
-            if (score >= GameState.config.winpoint) {
-                playSound('win');
-                alert(`Победа! Набрано ${score} очков!`);
-            }
-        }
-
-        function clearAnswers() {
-            document.querySelectorAll('.answer-text').forEach(text => {
-                text.textContent = '';
-                text.classList.remove('revealed');
-            });
-            GameState.openanswer = 0;
-            GameState.points = 0;
-            updateCurrentPointsDisplay();
-            saveState();
-            updateContextualHints();
-        }
-
-        // === SUPER GAME ===
-        function togglePlayer1Answers() {
-            GameState.superGameData.player1Visible = !GameState.superGameData.player1Visible;
-            const column = document.getElementById('player1-column');
-            column.style.visibility = GameState.superGameData.player1Visible ? 'visible' : 'hidden';
-            saveState();
-        }
-
-        function toggleSuperGameRow(index) {
-            if (index >= 5) return;
-            const rows = document.querySelectorAll('#player1-column .player-row');
-            if (rows[index]) {
-                const isVisible = rows[index].style.visibility !== 'hidden';
-                rows[index].style.visibility = isVisible ? 'hidden' : 'visible';
-            }
-        }
-
-        function startSuperGameTimer() {
-            const player1Sum = GameState.superGameData.player1Sum;
-            const timerDuration = player1Sum === 0 ? GameState.config.time1 : GameState.config.time2;
-            startTimer(timerDuration);
-        }
-
-        function calculateSuperGameSum() {
-            let player1Sum = 0;
-            let player2Sum = 0;
-
-            document.querySelectorAll('.p1-points').forEach(input => {
-                player1Sum += parseInt(input.value) || 0;
-            });
-
-            document.querySelectorAll('.p2-points').forEach(input => {
-                player2Sum += parseInt(input.value) || 0;
-            });
-
-            GameState.superGameData.player1Sum = player1Sum;
-            GameState.superGameData.player2Sum = player1Sum + player2Sum;
-
-            document.getElementById('p1-sum').value = player1Sum;
-            document.getElementById('p2-total').value = player1Sum + player2Sum;
-
-            if (player1Sum + player2Sum >= GameState.config.winpoint) {
-                document.getElementById('p2-total').style.color = 'red';
-            } else {
-                document.getElementById('p2-total').style.color = '#0f0';
-            }
-
-            saveState();
-        }
-
-        // === UI UPDATES ===
-        function updateQuestionText(text) {
-            document.getElementById('question-text').textContent = text;
-        }
-
-        function updateCurrentPointsDisplay() {
-            document.getElementById('current-points-lcd').textContent = GameState.points;
-        }
-
-        function updateScoreDisplays() {
-            document.getElementById('current-points-lcd').textContent = GameState.points;
-            document.getElementById('team0-score-lcd').textContent = GameState.point0;
-            document.getElementById('team1-score-lcd').textContent = GameState.point1;
-        }
-
-        function updateRoundIcons(level) {
-            const iconNum = level + 1;
-            document.getElementById('team0-round-icon').src = `bmp/game_${iconNum}.bmp`;
-            document.getElementById('team1-round-icon').src = `bmp/game_${iconNum}.bmp`;
-        }
-
-        function applySettings() {
-            document.getElementById('team0-name').textContent = GameState.config.command0name;
-            document.getElementById('team1-name').textContent = GameState.config.command1name;
-        }
-
-        // === TIMER ===
-        function startTimer(seconds) {
-            GameState.timer.remaining = seconds;
-            GameState.timer.active = true;
-
-            document.getElementById('timer-widget').style.display = 'flex';
-            document.getElementById('timer-seconds').textContent = `${seconds} сек`;
-
-            if (GameState.timer.intervalId) {
-                clearInterval(GameState.timer.intervalId);
-            }
-
-            GameState.timer.intervalId = setInterval(() => {
-                GameState.timer.remaining--;
-
-                if (GameState.timer.remaining < 0) {
-                    clearInterval(GameState.timer.intervalId);
-                    GameState.timer.active = false;
-                    document.getElementById('timer-widget').style.display = 'none';
-                    return;
-                }
-
-                document.getElementById('timer-seconds').textContent = `${GameState.timer.remaining} сек`;
-            }, 1000);
-        }
-
-        // === HELP ===
-        function toggleHelp() {
-            GameState.helpVisible = !GameState.helpVisible;
-            const overlay = document.getElementById('help-overlay');
-            overlay.style.display = GameState.helpVisible ? 'flex' : 'none';
-
-            if (GameState.helpVisible) {
-                document.getElementById('help-content').innerHTML = getContextualHelp();
-            }
-        }
-
-        function getContextualHelp() {
-            let html = '<h3>ОРГАНЫ УПРАВЛЕНИЯ</h3>';
-            html += '<div class="help-grid">';
-            html += '  <div class="help-item"><span class="help-key">F1</span><span class="help-desc">Показать/скрыть справку</span></div>';
-            html += '  <div class="help-item"><span class="help-key">F2</span><span class="help-desc">Настройки игры</span></div>';
-            html += '  <div class="help-item"><span class="help-key">F11</span><span class="help-desc">Полноэкранный режим</span></div>';
-            html += '  <div class="help-item"><span class="help-key">ESC</span><span class="help-desc">Закрыть диалог</span></div>';
-            html += '</div>';
-
-            html += '<h3>ИГРОВЫЕ КЛАВИШИ</h3>';
-            html += '<div class="help-grid">';
-            html += '  <div class="help-item"><span class="help-key">1-6</span><span class="help-desc">Открыть ответы</span></div>';
-            html += '  <div class="help-item"><span class="help-key">X / DEL</span><span class="help-desc">Неправильный ответ</span></div>';
-            html += '  <div class="help-item"><span class="help-key">Z</span><span class="help-desc">Очистить крестики</span></div>';
-            html += '  <div class="help-item"><span class="help-key">SPACE</span><span class="help-desc">Очистить все ответы</span></div>';
-            html += '  <div class="help-item"><span class="help-key">N / ↑</span><span class="help-desc">Следующий этап</span></div>';
-            html += '</div>';
-
-            html += '<h3>УПРАВЛЕНИЕ КОМАНДАМИ</h3>';
-            html += '<div class="help-grid">';
-            html += '  <div class="help-item"><span class="help-key">← / →</span><span class="help-desc">Выбрать команду</span></div>';
-            html += '  <div class="help-item"><span class="help-key">V</span><span class="help-desc">Переключить команду</span></div>';
-            html += '  <div class="help-item"><span class="help-key">C</span><span class="help-desc">Очки активной команде</span></div>';
-            html += '</div>';
-
-            html += '<h3>ОБРАТНАЯ ИГРА</h3>';
-            html += '<div class="help-grid">';
-            html += '  <div class="help-item"><span class="help-key">Q</span><span class="help-desc">Очки команде 1</span></div>';
-            html += '  <div class="help-item"><span class="help-key">W</span><span class="help-desc">Очки команде 2</span></div>';
-            html += '  <div class="help-item"><span class="help-key">T</span><span class="help-desc">Запустить таймер</span></div>';
-            html += '</div>';
-
-            html += '<h3>СУПЕР ИГРА</h3>';
-            html += '<div class="help-grid">';
-            html += '  <div class="help-item"><span class="help-key">A</span><span class="help-desc">Скрыть/показать ответы игрока 1</span></div>';
-            html += '  <div class="help-item"><span class="help-key">Q</span><span class="help-desc">Запустить таймер</span></div>';
-            html += '</div>';
-
-            // Текущее состояние (если игра идет)
-            if (GameState.level !== -1) {
-                const rounds = ['Простая игра', 'Двойная игра', 'Тройная игра', 'Обратная игра', 'Супер игра'];
-                html += '<div class="help-status">';
-                html += `  <strong>ТЕКУЩЕЕ СОСТОЯНИЕ</strong><br>`;
-                html += `  Раунд: ${rounds[GameState.level] || 'Не начата'}<br>`;
-                html += `  Команда: ${GameState.activecommand === 0 ? GameState.config.command0name : GameState.config.command1name}<br>`;
-                html += `  Очки: ${GameState.config.command0name} ${GameState.point0} | ${GameState.config.command1name} ${GameState.point1}`;
-                html += '</div>';
-            }
-
-            return html;
-        }
-
-        function updateContextualHints() {
-            const hintsContent = document.getElementById('hints-content');
-            if (!hintsContent) return;
-
-            let hints = [];
-
-            // Игра не начата
-            if (GameState.level === -1) {
-                hints.push('Начать игру: <kbd>N</kbd>');
-                hints.push('Настройки: <kbd>F2</kbd>');
-            }
-            // Выбор команды (жеребьевка)
-            else if (GameState.zhreby) {
-                hints.push('Выберите команду: <kbd>←</kbd> <kbd>→</kbd> или <kbd>V</kbd>');
-                hints.push('Показать вопрос: <kbd>N</kbd>');
-            }
-            // Обратная игра
-            else if (GameState.level === 3) {
-                hints.push('Очки команде 1: <kbd>Q</kbd>');
-                hints.push('Очки команде 2: <kbd>W</kbd>');
-                hints.push('Таймер: <kbd>T</kbd>');
-            }
-            // Супер игра
-            else if (GameState.level === 4) {
-                hints.push('Скрыть ответы игрока 1: <kbd>A</kbd>');
-                hints.push('Таймер: <kbd>Q</kbd>');
-                hints.push('Следующий этап: <kbd>N</kbd>');
-            }
-            // Обычная игра (раунды 1-3)
-            else {
-                hints.push('Открыть ответы: <kbd>1</kbd>-<kbd>6</kbd>');
-                hints.push('Ошибка: <kbd>X</kbd>');
-                hints.push('Очки команде: <kbd>C</kbd>');
-                hints.push('Очистить ответы: <kbd>SPACE</kbd>');
-            }
-
-            // Всегда добавляем помощь в конец
-            hints.push('Справка: <kbd>F1</kbd>');
-
-            hintsContent.innerHTML = hints.join(' · ');
-        }
-
-        function toggleFullscreen() {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(err => {
-                    console.warn('Fullscreen error:', err);
-                });
-            } else {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                }
-            }
-        }
-
-        // === SETTINGS ===
-        function openSettingsDialog() {
-            const modal = document.getElementById('settings-modal');
-            modal.style.display = 'flex';
-
-            // Populate form
-            document.getElementById('cfg-team0').value = GameState.config.command0name;
-            document.getElementById('cfg-team1').value = GameState.config.command1name;
-            document.getElementById('cfg-time1').value = GameState.config.time1;
-            document.getElementById('cfg-time2').value = GameState.config.time2;
-            document.getElementById('cfg-time3').value = GameState.config.timeRoundObr;
-            document.getElementById('cfg-winpoint').value = GameState.config.winpoint;
-
-            document.getElementById('cfg-round1').checked = GameState.config.rounds.ROUND_1;
-            document.getElementById('cfg-round2').checked = GameState.config.rounds.ROUND_2;
-            document.getElementById('cfg-round3').checked = GameState.config.rounds.ROUND_3;
-            document.getElementById('cfg-roundobr').checked = GameState.config.rounds.ROUND_OBR;
-            document.getElementById('cfg-roundsuper').checked = GameState.config.rounds.ROUND_SUPER;
-
-            // Populate questions
-            for (let i = 0; i < 4; i++) {
-                const q = GameState.questions[i];
-                document.getElementById(`q${i}-text`).value = q.name;
-                for (let j = 0; j < 6; j++) {
-                    document.getElementById(`q${i}-a${j}`).value = q.answers[j].text;
-                    document.getElementById(`q${i}-p${j}`).value = q.answers[j].num;
-                }
-            }
-        }
-
-        function saveSettings() {
-            // Read config
-            GameState.config.command0name = document.getElementById('cfg-team0').value;
-            GameState.config.command1name = document.getElementById('cfg-team1').value;
-            GameState.config.time1 = parseInt(document.getElementById('cfg-time1').value);
-            GameState.config.time2 = parseInt(document.getElementById('cfg-time2').value);
-            GameState.config.timeRoundObr = parseInt(document.getElementById('cfg-time3').value);
-            GameState.config.winpoint = parseInt(document.getElementById('cfg-winpoint').value);
-
-            GameState.config.rounds.ROUND_1 = document.getElementById('cfg-round1').checked;
-            GameState.config.rounds.ROUND_2 = document.getElementById('cfg-round2').checked;
-            GameState.config.rounds.ROUND_3 = document.getElementById('cfg-round3').checked;
-            GameState.config.rounds.ROUND_OBR = document.getElementById('cfg-roundobr').checked;
-            GameState.config.rounds.ROUND_SUPER = document.getElementById('cfg-roundsuper').checked;
-
-            // Read questions
-            for (let i = 0; i < 4; i++) {
-                GameState.questions[i].name = document.getElementById(`q${i}-text`).value;
-                for (let j = 0; j < 6; j++) {
-                    GameState.questions[i].answers[j].text = document.getElementById(`q${i}-a${j}`).value;
-                    GameState.questions[i].answers[j].num = parseInt(document.getElementById(`q${i}-p${j}`).value);
-                }
-            }
-
-            saveState();
-            applySettings();
-            document.getElementById('settings-modal').style.display = 'none';
-            alert('Настройки сохранены!');
-        }
-
-        // === IMPORT/EXPORT ===
-        function exportToJSON() {
-            const data = {
-                config: GameState.config,
-                questions: GameState.questions
-            };
-
-            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'game_settings.json';
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-
-        function importFromJSON(file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    if (data.config) GameState.config = data.config;
-                    if (data.questions) GameState.questions = data.questions;
-                    saveState();
-                    applySettings();
-                    alert('Настройки загружены!');
-                } catch (err) {
-                    alert('Ошибка: ' + err.message);
-                }
-            };
-            reader.readAsText(file);
-        }
-
-        // === STATE PERSISTENCE ===
-        function saveState() {
-            localStorage.setItem('game_state', JSON.stringify(GameState));
-        }
-
-        function loadState() {
-            const saved = localStorage.getItem('game_state');
-            if (saved) {
-                const loaded = JSON.parse(saved);
-                Object.assign(GameState, loaded);
-            }
-        }
-
-        // === SOUND ===
-        function playSound(name) {
-            const audio = document.getElementById(`sound-${name}`);
-            if (audio) {
-                audio.currentTime = 0;
-                audio.play().catch(err => console.warn('Audio play failed:', err));
-            }
-        }
-
-        // === START ===
-        window.addEventListener('DOMContentLoaded', init);
-    </script>
+    <script type="module" src="js/app.js"></script>
 
     <!-- Панель управления для организатора -->
     <div id="control-panel">

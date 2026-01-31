@@ -18,7 +18,8 @@ class RoundReverse_TitleShown extends GameState {
         super.enter(context);
 
         DOM.regularLayout.style.display = 'flex';
-        DOM.superGameLayout.style.display = 'none';
+        DOM.bottomArea.style.display = 'flex';
+        DOM.superGameGrid.style.display = 'none';
 
         // Очистить UI
         clearAnswers();

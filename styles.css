@@ -1,0 +1,590 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: white;
+    height: 100vh;
+    overflow: hidden;
+    user-select: none;
+}
+
+#game-container {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 55px);
+    padding: 20px;
+}
+
+/* Вопрос */
+#question-area {
+    text-align: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+#question-text {
+    font-size: 36px;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+/* Регулярные раунды */
+#regular-game-layout {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Верх: имена команд + текущие очки */
+#top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.team-name {
+    font-size: 30px;
+    min-width: 250px;
+    text-align: center;
+}
+
+.team-name.active {
+    font-weight: bold;
+    text-decoration: underline;
+    color: #ffcc00;
+}
+
+/* LCD дисплей */
+.lcd-display {
+    background: #000;
+    color: #0f0;
+    font-family: 'Courier New', monospace;
+    font-size: 48px;
+    padding: 10px 20px;
+    border: 2px solid #333;
+    text-align: center;
+    min-width: 150px;
+    box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.3);
+    border-radius: 5px;
+}
+
+/* Низ: команды + ответы */
+#bottom-area {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    flex: 1;
+}
+
+.team-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    border-radius: 10px;
+    min-width: 200px;
+}
+
+.round-icon {
+    max-width: 150px;
+    max-height: 100px;
+}
+
+.bad-marks {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.x-mark {
+    width: 60px;
+    height: 60px;
+}
+
+/* Ответы */
+#answers-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    min-height: 0;
+}
+
+.answer-slot {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.answer-bg {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 5px;
+}
+
+.answer-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    color: white;
+    text-shadow: 2px 2px 4px black;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.answer-points {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 36px;
+    font-weight: bold;
+    color: #ffd700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.answer-text.revealed {
+    animation: revealAnswer 0.4s ease-out;
+}
+
+@keyframes revealAnswer {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.5);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+/* Супер игра */
+#super-game-grid {
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+    flex: 1;
+    padding: 20px;
+}
+
+.player-column {
+    flex: 1;
+    max-width: 550px;
+    display: flex;
+    flex-direction: column;
+    background: rgba(42, 82, 152, 0.6);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.player-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    align-items: center;
+}
+
+.row-num {
+    font-size: 20px;
+    font-weight: bold;
+    min-width: 30px;
+}
+
+.answer-input {
+    flex: 1;
+    padding: 10px;
+    font-size: 24px;
+    border: none;
+    border-radius: 5px;
+}
+
+.points-input {
+    width: 80px;
+    padding: 10px;
+    font-size: 24px;
+    border: none;
+    border-radius: 5px;
+}
+
+.sum-row {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 2px solid rgba(255, 255, 255, 0.3);
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.sum-row span {
+    font-size: 20px;
+    font-weight: bold;
+    min-width: 80px;
+}
+
+.sum-display {
+    flex: 1;
+    padding: 10px;
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    background: #000;
+    color: #0f0;
+    border: 2px solid #333;
+    border-radius: 5px;
+}
+
+#super-game-controls {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+}
+
+#super-game-controls button {
+    padding: 15px 30px;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    transition: all 0.3s;
+}
+
+#super-game-controls button:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
+}
+
+/* Таймер */
+#timer-widget {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    display: none;
+    align-items: center;
+    gap: 15px;
+
+    background: rgba(0, 0, 0, 0.9);
+    border: 3px solid #ffcc00;
+    border-radius: 15px;
+    padding: 30px 50px;
+
+    box-shadow: 0 0 30px rgba(255, 204, 0, 0.5);
+    z-index: 1000;
+}
+
+.timer-icon {
+    width: 60px;
+    height: 60px;
+}
+
+#timer-seconds {
+    font-size: 48px;
+    font-weight: bold;
+    color: #ffcc00;
+    text-shadow: 0 0 10px rgba(255, 204, 0, 0.8);
+}
+
+/* Help overlay */
+#help-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.9);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+#help-content {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 40px 50px;
+    border-radius: 20px;
+    max-width: 1100px;
+    max-height: 85vh;
+    overflow-y: auto;
+}
+
+#help-content h3 {
+    grid-column: 1 / -1;  /* Заголовки на всю ширину */
+    margin: 15px 0 10px 0;
+    font-size: 22px;
+    color: #ffcc00;
+    border-bottom: 1px solid rgba(255, 204, 0, 0.3);
+    padding-bottom: 5px;
+}
+
+#help-content .help-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;  /* 2 колонки */
+    gap: 12px 30px;
+    margin-bottom: 20px;
+}
+
+#help-content .help-item {
+    display: flex;
+    align-items: baseline;
+    font-size: 18px;
+    line-height: 1.6;
+}
+
+#help-content .help-key {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 3px 10px;
+    border-radius: 4px;
+    margin-right: 10px;
+    font-family: monospace;
+    font-weight: bold;
+    min-width: 60px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+#help-content .help-desc {
+    flex: 1;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+#help-content .help-status {
+    grid-column: 1 / -1;  /* Статус на всю ширину */
+    margin-top: 10px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 17px;
+    line-height: 1.7;
+}
+
+/* Settings modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.9);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+.modal-content {
+    background: rgba(30, 60, 114, 0.95);
+    padding: 40px;
+    border-radius: 20px;
+    max-width: 900px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.tab-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+.tab-btn.active {
+    background: rgba(255, 255, 255, 0.4);
+    font-weight: bold;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.tab-content label {
+    display: block;
+    margin: 15px 0;
+    font-size: 16px;
+}
+
+.tab-content input[type="text"],
+.tab-content input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.tab-content input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+.answers-grid {
+    display: grid;
+    gap: 10px;
+}
+
+.answer-editor-row {
+    display: grid;
+    grid-template-columns: 1fr 100px;
+    gap: 10px;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.modal-buttons button {
+    padding: 15px 40px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s;
+}
+
+#settings-save {
+    background: #51cf66;
+    color: white;
+}
+
+#settings-cancel {
+    background: #ff6b6b;
+    color: white;
+}
+
+/* Панель управления для организатора */
+#control-panel {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 10000;
+    opacity: 0.3;
+    transition: opacity 0.3s;
+}
+
+#control-panel:hover {
+    opacity: 1;
+}
+
+.control-btn {
+    width: 32px;
+    height: 32px;
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid #666;
+    border-radius: 4px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.control-btn:hover {
+    background: rgba(0, 0, 0, 0.9);
+    border-color: #ffcc00;
+}
+
+.control-btn:active {
+    background: #ffcc00;
+    color: black;
+}
+
+/* Контекстные подсказки внизу */
+#hints-panel {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 55px;
+    background: rgba(0, 0, 0, 0.85);
+    color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 500;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 12px;
+}
+
+#hints-content {
+    text-align: center;
+    padding: 0 20px;
+}
+
+#hints-content kbd {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 3px 8px;
+    border-radius: 3px;
+    margin: 0 2px;
+    font-family: monospace;
+    font-size: 11px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.tab-btn.disabled {
+    background: rgba(255, 100, 100, 0.3);
+    border: 1px solid rgba(255, 100, 100, 0.5);
+}
+
+.tab-btn.disabled:hover {
+    background: rgba(255, 100, 100, 0.4);
+}
+
+.round-toggle {
+    display: block;
+    margin-bottom: 20px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 5px;
+    font-weight: bold;
+}
