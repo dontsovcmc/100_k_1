@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>100 к 1</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Основной контейнер -->
+    <div id="game-container">
+        <!-- Вопрос -->
+        <div id="question-area">
+            <div id="question-text">Игра 100 к 1</div>
+        </div>
+
+        <!-- Регулярные раунды -->
+        <div id="regular-game-layout">
+            <!-- Верх: имена команд + текущие очки -->
+            <div id="top-bar">
+                <div id="team0-name" class="team-name active">Команда 1</div>
+                <div id="current-points-lcd" class="lcd-display">0</div>
+                <div id="team1-name" class="team-name">Команда 2</div>
+            </div>
+
+            <!-- Низ: команды + ответы + X marks -->
+            <div id="bottom-area">
+                <!-- Команда 0 -->
+                <div id="team0-column" class="team-column">
+                    <img id="team0-round-icon" class="round-icon" src="bmp/game_1.bmp" alt="Round">
+                    <div id="team0-score-lcd" class="lcd-display">0</div>
+                    <div id="team0-bad-marks" class="bad-marks">
+                        <img class="x-mark" src="bmp/x_0.bmp" alt="X" id="x1-1">
+                        <img class="x-mark" src="bmp/x_0.bmp" alt="X" id="x1-2">
+                        <img class="x-mark" src="bmp/x_0.bmp" alt="X" id="x1-3">
+                    </div>
+                </div>
+
+                <!-- Ответы (6 слотов) -->
+                <div id="answers-column">
+                    <div class="answer-slot" data-index="0" id="answer1">
+                        <img src="bmp/answ_1.bmp" class="answer-bg" alt="Answer 1">
+                        <div class="answer-text"></div>
+                        <div class="answer-points"></div>
+                    </div>
+                    <div class="answer-slot" data-index="1" id="answer2">
+                        <img src="bmp/answ_2.bmp" class="answer-bg" alt="Answer 2">
+                        <div class="answer-text"></div>
+                        <div class="answer-points"></div>
+                    </div>
+                    <div class="answer-slot" data-index="2" id="answer3">
+                        <img src="bmp/answ_3.bmp" class="answer-bg" alt="Answer 3">
+                        <div class="answer-text"></div>
+                        <div class="answer-points"></div>
+                    </div>
+                    <div class="answer-slot" data-index="3" id="answer4">
+                        <img src="bmp/answ_4.bmp" class="answer-bg" alt="Answer 4">
+                        <div class="answer-text"></div>
+                        <div class="answer-points"></div>
+                    </div>
+                    <div class="answer-slot" data-index="4" id="answer5">
+                        <img src="bmp/answ_5.bmp" class="answer-bg" alt="Answer 5">
+                        <div class="answer-text"></div>
+                        <div class="answer-points"></div>
+                    </div>
+                    <div class="answer-slot" data-index="5" id="answer6">
+                        <img src="bmp/answ_6.bmp" class="answer-bg" alt="Answer 6">
+                        <div class="answer-text"></div>
+                        <div class="answer-points"></div>
+                    </div>
+                    <div class="answer-slot" data-index="6">
+                        <div class="answer-bg" style="width: 100%; height: 100%; background: transparent; border-radius: 5px;"></div>
+                        <div class="answer-text"></div>
+                    </div>
+                </div>
+
+                <!-- Команда 1 -->
+                <div id="team1-column" class="team-column">
+                    <img id="team1-round-icon" class="round-icon" src="bmp/game_1.bmp" alt="Round">
+                    <div id="team1-score-lcd" class="lcd-display">0</div>
+                    <div id="team1-bad-marks" class="bad-marks">
+                        <img class="x-mark" src="bmp/x_0.bmp" alt="X" id="x2-1">
+                        <img class="x-mark" src="bmp/x_0.bmp" alt="X" id="x2-2">
+                        <img class="x-mark" src="bmp/x_0.bmp" alt="X" id="x2-3">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Супер игра -->
+        <div id="super-game-layout">
+            <div id="super-game-grid">
+                <!-- Игрок 1 -->
+                <div class="player-column" id="player1-column">
+                    <h3>Игрок 1</h3>
+                    <div class="player-row" data-row="0">
+                        <span class="row-num">1.</span>
+                        <input type="text" class="answer-input p1-answer" placeholder="Ответ">
+                        <input type="number" class="points-input p1-points" placeholder="0">
+                    </div>
+                    <div class="player-row" data-row="1">
+                        <span class="row-num">2.</span>
+                        <input type="text" class="answer-input p1-answer" placeholder="Ответ">
+                        <input type="number" class="points-input p1-points" placeholder="0">
+                    </div>
+                    <div class="player-row" data-row="2">
+                        <span class="row-num">3.</span>
+                        <input type="text" class="answer-input p1-answer" placeholder="Ответ">
+                        <input type="number" class="points-input p1-points" placeholder="0">
+                    </div>
+                    <div class="player-row" data-row="3">
+                        <span class="row-num">4.</span>
+                        <input type="text" class="answer-input p1-answer" placeholder="Ответ">
+                        <input type="number" class="points-input p1-points" placeholder="0">
+                    </div>
+                    <div class="player-row" data-row="4">
+                        <span class="row-num">5.</span>
+                        <input type="text" class="answer-input p1-answer" placeholder="Ответ">
+                        <input type="number" class="points-input p1-points" placeholder="0">
+                    </div>
+                    <div class="sum-row">
+                        <span>Сумма:</span>
+                        <input type="number" class="sum-display" id="p1-sum" readonly value="0">
+                    </div>
+                </div>
+
+                <!-- Игрок 2 -->
+                <div class="player-column" id="player2-column">
+                    <h3>Игрок 2</h3>
+                    <div class="player-row" data-row="0">
+                        <span class="row-num">1.</span>
+                        <input type="text" class="answer-input p2-answer" placeholder="Ответ">
+                        <input type="number" class="points-input p2-points" placeholder="0">
+                    </div>
+                    <div class="player-row" data-row="1">
+                        <span class="row-num">2.</span>
+                        <input type="text" class="answer-input p2-answer" placeholder="Ответ">
+                        <input type="number" class="points-input p2-points" placeholder="0">
+                    </div>
+                    <div class="player-row" data-row="2">
+                        <span class="row-num">3.</span>
+                        <input type="text" class="answer-input p2-answer" placeholder="Ответ">
+                        <input type="number" class="points-input p2-points" placeholder="0">
+                    </div>
+                    <div class="player-row" data-row="3">
+                        <span class="row-num">4.</span>
+                        <input type="text" class="answer-input p2-answer" placeholder="Ответ">
+                        <input type="number" class="points-input p2-points" placeholder="0">
+                    </div>
+                    <div class="player-row" data-row="4">
+                        <span class="row-num">5.</span>
+                        <input type="text" class="answer-input p2-answer" placeholder="Ответ">
+                        <input type="number" class="points-input p2-points" placeholder="0">
+                    </div>
+                    <div class="sum-row">
+                        <span>Итого:</span>
+                        <input type="number" class="sum-display" id="p2-total" readonly value="0">
+                    </div>
+                </div>
+            </div>
+
+            <div id="super-game-controls">
+                <button id="hide-player1">Скрыть ответы Игрока 1</button>
+                <button id="start-timer-btn">Таймер</button>
+                <button id="calc-sum-btn">Подсчёт</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Таймер -->
+    <div id="timer-widget">
+        <img src="bmp/timer.bmp" class="timer-icon" alt="Timer">
+        <div id="timer-seconds">60 сек</div>
+    </div>
+
+    <!-- Help overlay -->
+    <div id="help-overlay">
+        <div id="help-content">F1 - помощь\nF2 - настройки</div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content">
+            <h2>Настройки</h2>
+
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="general">Игра</button>
+                <button class="tab-btn" data-tab="q0" data-round="ROUND_1">Простая игра</button>
+                <button class="tab-btn" data-tab="q1" data-round="ROUND_2">Двойная игра</button>
+                <button class="tab-btn" data-tab="q2" data-round="ROUND_3">Тройная игра</button>
+                <button class="tab-btn" data-tab="q3" data-round="ROUND_OBR">Игра наоборот</button>
+                <button class="tab-btn" data-tab="qsuper" data-round="ROUND_SUPER">Большая игра</button>
+            </div>
+
+            <div id="tab-general" class="tab-content active">
+                <label>
+                    Тема игры:
+                    <input type="text" id="cfg-game-theme" placeholder="100 к 1">
+                </label>
+                <label>
+                    Команда 1:
+                    <input type="text" id="cfg-team0" placeholder="Команда 1">
+                </label>
+                <label>
+                    Команда 2:
+                    <input type="text" id="cfg-team1" placeholder="Команда 2">
+                </label>
+                <label>
+                    Баллы команды 1:
+                    <input type="number" id="cfg-point0" placeholder="0" min="0">
+                </label>
+                <label>
+                    Баллы команды 2:
+                    <input type="number" id="cfg-point1" placeholder="0" min="0">
+                </label>
+                <label>
+                    Текущие очки (в раунде):
+                    <input type="number" id="cfg-current-points" placeholder="0" min="0">
+                </label>
+            </div>
+
+            <div id="tab-q0" class="tab-content">
+                <label class="round-toggle">
+                    <input type="checkbox" id="cfg-round1" checked>
+                    Включить раунд
+                </label>
+                <label>
+                    Вопрос:
+                    <input type="text" id="q0-text" placeholder="Вопрос для раунда 1">
+                </label>
+                <div class="answers-grid">
+                    <div class="answer-editor-row">
+                        <input type="text" id="q0-a0" placeholder="Ответ 1">
+                        <input type="number" id="q0-p0" placeholder="40">
+                    </div>
+                    <div class="answer-editor-row">
+                        <input type="text" id="q0-a1" placeholder="Ответ 2">
+                        <input type="number" id="q0-p1" placeholder="30">
+                    </div>
+                    <div class="answer-editor-row">
+                        <input type="text" id="q0-a2" placeholder="Ответ 3">
+                        <input type="number" id="q0-p2" placeholder="20">
+                    </div>
+                    <div class="answer-editor-row">
+                        <input type="text" id="q0-a3" placeholder="Ответ 4">
+                        <input type="number" id="q0-p3" placeholder="15">
+                    </div>
+                    <div class="answer-editor-row">
+                        <input type="text" id="q0-a4" placeholder="Ответ 5">
+                        <input type="number" id="q0-p4" placeholder="10">
+                    </div>
+                    <div class="answer-editor-row">
+                        <input type="text" id="q0-a5" placeholder="Ответ 6">
+                        <input type="number" id="q0-p5" placeholder="5">
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-q1" class="tab-content">
+                <label class="round-toggle">
+                    <input type="checkbox" id="cfg-round2" checked>
+                    Включить раунд
+                </label>
+                <label>
+                    Вопрос:
+                    <input type="text" id="q1-text" placeholder="Вопрос для раунда 2">
+                </label>
+                <div class="answers-grid">
+                    <div class="answer-editor-row">
+                        <input type="text" id="q1-a0" placeholder="Ответ 1">
+                        <input type="number" id="q1-p0" placeholder="40">
+                    </div>
+                    <div class="answer-editor-row">
+                        <input type="text" id="q1-a1" placeholder="Ответ 2">
+                        <input type="number" id="q1-p1" placeholder="30">
+                    </div>
+                    <div class="answer-editor-row">
+                        <input type="text" id="q1-a2" placeholder="Ответ 3">
+                        <input type="number" id="q1-p2" placeholder="20">
+                    </div>
+                    <div class="answer-editor-row">
+                        <input type="text" id="q1-a3" placeholder="Ответ 4">
+                        <input type="number" id="q1-p3" placeholder="15">
+                    </div>
+                    <div class="answer-editor-row">
+                        <input type="text" id="q1-a4" placeholder="Ответ 5">
+                        <input type="number" id="q1-p4" placeholder="10">
+                    </div>
+                    <div class="answer-editor-row">
+                        <input type="text" id="q1-a5" placeholder="Ответ 6">
+                        <input type="number" id="q1-p5" placeholder="5">
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-q2" class="tab-content">
+                <label class="round-toggle">
+                    <input type="checkbox" id="cfg-round3" checked>
+                    Включить раунд
+                </label>
+                <label>
+                    Вопрос:
+                    <input type="text" id="q2-text" placeholder="Вопрос для раунда 3">
+                </label>
+                <div class="answers-grid">
+                    <div class="answer-editor-row">
+                        <input type="text" id="q2-a0" placeholder="Ответ 1">
+                        <input type="number" id="q2-p0" placeholder="40">
+                    </div>
+                    <div class="answer-editor-row">
+                        <input type="text" id="q2-a1" placeholder="Ответ 2">
+                        <input type="number" id="q2-p1" placeholder="30">
+                    </div>
+                    <div class="answer-editor-row">
+                        <input type="text" id="q2-a2" placeholder="Ответ 3">
+                        <input type="number" id="q2-p2" placeholder="20">
+                    </div>
+                    <div class="answer-editor-row">
+                        <input type="text" id="q2-a3" placeholder="Ответ 4">
+                        <input type="number" id="q2-p3" placeholder="15">
+                    </div>
+                    <div class="answer-editor-row">
+                        <input type="text" id="q2-a4" placeholder="Ответ 5">
+                        <input type="number" id="q2-p4" placeholder="10">
+                    </div>
+                    <div class="answer-editor-row">
+                        <input type="text" id="q2-a5" placeholder="Ответ 6">
+                        <input type="number" id="q2-p5" placeholder="5">
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-q3" class="tab-content">
+                <label class="round-toggle">
+                    <input type="checkbox" id="cfg-roundobr" checked>
+                    Включить раунд
+                </label>
+                <label>
+                    Таймер (сек):
+                    <input type="number" id="cfg-time3" value="60">
+                </label>
+                <label>
+                    Вопрос:
+                    <input type="text" id="q3-text" placeholder="Вопрос для обратной игры">
+                </label>
+                <div class="answers-grid">
+                    <div class="answer-editor-row">
+                        <input type="text" id="q3-a0" placeholder="Ответ 1">
+                        <input type="number" id="q3-p0" placeholder="40">
+                    </div>
+                    <div class="answer-editor-row">
+                        <input type="text" id="q3-a1" placeholder="Ответ 2">
+                        <input type="number" id="q3-p1" placeholder="30">
+                    </div>
+                    <div class="answer-editor-row">
+                        <input type="text" id="q3-a2" placeholder="Ответ 3">
+                        <input type="number" id="q3-p2" placeholder="20">
+                    </div>
+                    <div class="answer-editor-row">
+                        <input type="text" id="q3-a3" placeholder="Ответ 4">
+                        <input type="number" id="q3-p3" placeholder="15">
+                    </div>
+                    <div class="answer-editor-row">
+                        <input type="text" id="q3-a4" placeholder="Ответ 5">
+                        <input type="number" id="q3-p4" placeholder="10">
+                    </div>
+                    <div class="answer-editor-row">
+                        <input type="text" id="q3-a5" placeholder="Ответ 6">
+                        <input type="number" id="q3-p5" placeholder="5">
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-qsuper" class="tab-content">
+                <label class="round-toggle">
+                    <input type="checkbox" id="cfg-roundsuper" checked>
+                    Включить раунд
+                </label>
+                <label>
+                    Первый игрок, сек:
+                    <input type="number" id="cfg-time1" value="15">
+                </label>
+                <label>
+                    Второй игрок, сек:
+                    <input type="number" id="cfg-time2" value="20">
+                </label>
+                <label>
+                    Очки для победы:
+                    <input type="number" id="cfg-winpoint-super" value="200">
+                </label>
+            </div>
+
+            <div class="modal-buttons">
+                <button id="settings-save">OK</button>
+                <button id="settings-cancel">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Win Modal -->
+    <div id="win-modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center;">
+        <div style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); padding: 40px; border-radius: 15px; border: 3px solid #ffd700; box-shadow: 0 0 30px rgba(255,215,0,0.5); text-align: center; min-width: 400px;">
+            <div style="font-size: 48px; margin-bottom: 20px;">🏆</div>
+            <h2 style="color: #ffd700; font-size: 36px; margin: 0 0 20px 0;">ПОБЕДА!</h2>
+            <p id="win-message" style="color: white; font-size: 24px; margin: 0 0 30px 0;">Набрано 0 очков!</p>
+            <button id="win-modal-ok" style="background: #ffd700; color: #1e3c72; border: none; padding: 15px 40px; font-size: 20px; font-weight: bold; border-radius: 10px; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.3);">OK</button>
+        </div>
+    </div>
+
+    <!-- Hidden file input for JSON import -->
+    <input type="file" id="json-file-input" accept=".json" style="display:none">
+
+    <!-- Audio -->
+    <audio id="sound-start" src="sounds/start.wav" preload="auto"></audio>
+    <audio id="sound-open" src="sounds/open.wav" preload="auto"></audio>
+    <audio id="sound-bad" src="sounds/bad.wav" preload="auto"></audio>
+    <audio id="sound-level" src="sounds/level.wav" preload="auto"></audio>
+    <audio id="sound-win" src="sounds/win.wav" preload="auto"></audio>
+
+    <script src="dist/bundle.js"></script>
+
+    <!-- Панель управления для организатора -->
+    <div id="control-panel">
+        <button class="control-btn" id="btn-fullscreen" title="Полный экран (F11)">🖥️</button>
+        <button class="control-btn" id="btn-help" title="Памятка (F1)">❓</button>
+        <button class="control-btn" id="btn-settings" title="Настройки (F2)">⚙️</button>
+        <button class="control-btn" id="btn-import" title="Импорт JSON">📥</button>
+        <button class="control-btn" id="btn-export" title="Экспорт JSON">📤</button>
+    </div>
+
+    <!-- Контекстные подсказки внизу экрана -->
+    <div id="hints-panel">
+        <div id="hints-content">Нажмите F1 для справки</div>
+    </div>
+</body>
+</html>

@@ -44,9 +44,6 @@ npm-debug.log
 yarn.lock
 
 # Build output
-dist/
-bundle.js
-dist/bundle.js
 dist/bundle.js.map
 
 # Development
