@@ -934,6 +934,30 @@ After completion → Next enabled round OR WaitingToStart if no more rounds
 
 ## Development Notes
 
+### ⚠️ CRITICAL: Build Workflow
+
+**IMPORTANT**: After making ANY changes to JavaScript files in `js/` directory, you MUST:
+
+1. **Rebuild the bundle**:
+   ```bash
+   npm run build
+   ```
+   This updates `dist/bundle.js` which is used by `index-prod.html`
+
+2. **Commit BOTH changes**:
+   ```bash
+   git add js/ dist/bundle.js
+   git commit -m "Your changes"
+   ```
+
+**Why this matters**:
+- `index-prod.html` is the standalone version users download
+- It depends on `dist/bundle.js` (NOT on `js/` modules)
+- If you don't rebuild, `index-prod.html` will have outdated code
+- `dist/bundle.js` is tracked in git for easy download-and-play
+
+**Quick check**: If you modified any `.js` file, run `npm run build` before committing.
+
 ### Browser Compatibility
 
 **Required Features**
