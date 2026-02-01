@@ -15,8 +15,8 @@ const MAX_WRONG_ANSWERS = 3;
 const MAX_ANSWERS = 6;
 
 const IMAGES = {
-    X_EMPTY: 'bmp/_x_0.bmp',
-    X_FILLED: 'bmp/_x_1.bmp'
+    X_EMPTY: 'bmp/x_0.bmp',
+    X_FILLED: 'bmp/x_1.bmp'
 };
 
 const SOUNDS = {
